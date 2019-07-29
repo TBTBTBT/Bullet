@@ -11,14 +11,14 @@ namespace Toast.Masterdata.Editor
 
     public class TableData
     {
-        public Dictionary<string, List<string>> Data = new Dictionary<string, List<string>>();
-        string labelCache = "";
+        public Dictionary<string, (List<string> Data,string Define, int Width)> Data = new Dictionary<string, (List<string> Data, string Define, int Width)>();
+        private string labelCache = "";
         private int selectedIndexCache = 0;
-        public void AddData(string label)
+        public void AddData(string label,string type)
         {
             if (label != "" && !Data.ContainsKey(label))
             {
-                Data.Add(label, new List<string>());
+                Data.Add(label,( new List<string>() , type , 50 ));
             }
 
             CheckDataLength();
@@ -29,14 +29,16 @@ namespace Toast.Masterdata.Editor
             if (label != "" && Data.ContainsKey(label))
             {
                 Data.Remove(label);
+               
             }
+
         }
 
         void AddRow()
         {
             foreach (var list in Data)
             {
-                list.Value.Add("");
+                list.Value.Data.Add("");
             }
 
             CheckDataLength();
@@ -45,7 +47,7 @@ namespace Toast.Masterdata.Editor
         {
             foreach (var list in Data)
             {
-                list.Value.RemoveAt(row);
+                list.Value.Data.RemoveAt(row);
             }
 
         }
@@ -55,40 +57,14 @@ namespace Toast.Masterdata.Editor
             GUILayout.BeginVertical(GUI.skin.box);
             //ラベル表示
             AddColumnButton();
-            
-            GUILayout.BeginHorizontal();
-            ViewLabel(Data.Keys.ToArray()); 
 
-            GUILayout.EndHorizontal();
-            ViewData(Data.Values.ToArray());
+            ViewData(Data);
             //カラム表示
-            GUILayout.BeginHorizontal();
-            GUILayout.EndHorizontal();
+
             AddRowButton();
             GUILayout.EndVertical();
         }
 
-
-        private void ViewLabel(string[] texts)
-        {
-            if (texts.Length <= 0)
-            {
-                return;
-                selectedIndexCache =
-                    GUILayout.SelectionGrid(selectedIndexCache, texts, texts.Length, EditorStyles.miniButtonMid);
-            }
-
-            foreach (var text in texts)
-            {
-                GUILayout.Label(text, EditorStyles.miniButtonMid);
-
-                //公式によるとリペイント時に限るらしいがこれでうまくいってるので…
-                var rect = GUILayoutUtility.GetLastRect();
-
-                LabelRightClickEvent(text,rect);
-                
-            }
-        }
         private void LabelRightClickEvent(string label, Rect rect)
         {
             var ev = Event.current;
@@ -110,29 +86,36 @@ namespace Toast.Masterdata.Editor
             var max = 0;
             foreach (var list in Data)
             {
-                max = Math.Max(list.Value.Count ,max) ;
+                max = Math.Max(list.Value.Data.Count ,max) ;
             }
 
             foreach (var list in Data)
             {
-                var d = max - list.Value.Count;
+                var d = max - list.Value.Data.Count;
                 if (d > 0)
                 {
                     var l = new string[d];
-                    list.Value.AddRange(l);
+                    list.Value.Data.AddRange(l);
                 }
             }
         }
 
-        private void ViewData(List<string>[] data)
+        private void ViewData(Dictionary<string, (List<string> Data, string Define, int Width)> data)
         {
             GUILayout.BeginHorizontal();
+            
             foreach (var list in data)
             {
-                GUILayout.BeginVertical(GUI.skin.box);
-                for (var i = 0; i < list.Count; i++)
+                GUILayout.BeginVertical(GUI.skin.box, GUILayout.Width(list.Value.Width));
+                GUILayout.Label(list.Key, EditorStyles.miniButtonMid);
+                //公式によるとリペイント時に限るらしいがこれでうまくいってるので…
+                var rect = GUILayoutUtility.GetLastRect();
+                LabelRightClickEvent(list.Key, rect);
+               
+                GUILayout.Label(list.Value.Define);
+                for (var i = 0; i < list.Value.Data.Count; i++)
                 {
-                    list[i] = GUILayout.TextArea(list[i]);
+                    list.Value.Data[i] = GUILayout.TextField(list.Value.Data[i]);
                 }
                 GUILayout.EndVertical();
             }
@@ -149,7 +132,7 @@ namespace Toast.Masterdata.Editor
             labelCache = GUILayout.TextArea(labelCache);
             if (GUILayout.Button("+"))
             {
-                AddData(labelCache);
+                AddData(labelCache,"string");
                 labelCache = "";
             }
 
