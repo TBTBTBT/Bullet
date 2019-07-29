@@ -150,7 +150,10 @@ namespace Toast.Masterdata.Editor
 
     class TableToClass
     {
+        public static void MakeScript(string name ,Dictionary<string, (List<string> Data, string Define)> list)
+        {
 
+        }
     }
 
     class TableToJson
