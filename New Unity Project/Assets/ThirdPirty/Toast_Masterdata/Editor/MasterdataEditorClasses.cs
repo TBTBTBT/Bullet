@@ -52,6 +52,7 @@ namespace Toast.Masterdata.Editor
             }
 
         }
+
         public void View()
         {
 
@@ -60,6 +61,7 @@ namespace Toast.Masterdata.Editor
             ViewData(Data);
 
             AddRowButton();
+            AddSaveToJsonButton();
             GUILayout.EndVertical();
         }
 
@@ -92,7 +94,8 @@ namespace Toast.Masterdata.Editor
                 var d = max - list.Value.Data.Count;
                 if (d > 0)
                 {
-                    var l = new string[d];
+                    var l = Enumerable.Repeat<string>("", d).ToArray();
+
                     list.Value.Data.AddRange(l);
                 }
             }
@@ -161,10 +164,36 @@ namespace Toast.Masterdata.Editor
             }
 
         }
+        private void AddSaveToJsonButton()
+        {
+            if (GUILayout.Button("SAVE AS", GUILayout.Width(100)))
+            {
+                SaveToJson();
+            }
 
+        }
         private void SaveToJson()
         {
+            var max = 0;
+            foreach (var l in Data)
+            {
+                max = Math.Max(l.Value.Data.Count, max);
+            }
+            var list = new List<Dictionary<string, string>>();
+            
+            for (int i = 0;i < max; i++)
+            {
+                var dic = new Dictionary<string, string>();
+                foreach (var d in Data)
+                {
+                    dic.Add(d.Key, d.Value.Data[i]);
 
+                }
+                list.Add(dic);
+            }
+           
+            
+            TableToJson.MakeJson(Application.dataPath+ "/test.json",list);
         }
 
         private void SaveToClass()
@@ -173,17 +202,27 @@ namespace Toast.Masterdata.Editor
         }
     }
 
-    class TableToClass
+    class DefineToClass
     {
-        public static void MakeScript(string name ,Dictionary<string, (List<string> Data, string Define)> list)
+        public static void MakeScript(string name ,List<Dictionary<string, string>> def)
         {
 
+            var json = MiniJSON.Json.Serialize(def);
         }
     }
 
     class TableToJson
     {
+        public static void MakeJson(string path, List<Dictionary<string, string>> list)
+        {
+            var json = MiniJSON.Json.Serialize(list);
+            Debug.Log(json);
 
+        }
+        public static void MakeDefJson()
+        {
+
+        }
     }
 
 }

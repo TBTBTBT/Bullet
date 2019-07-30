@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Toast.Rg
+namespace Toast
 {
 
     public abstract class Singleton<T> where T : Singleton<T>, new()
@@ -24,7 +24,11 @@ namespace Toast.Rg
                     _instance = (T)FindObjectOfType(t);
                     if (_instance == null)
                     {
-                        Debug.LogError($" {t} が見つからない");
+                        //Debug.LogError($" {t} が見つからない");
+                        Debug.Log($"Make Singleton {t}");
+                        var go = new GameObject();
+                        go.AddComponent<T>();
+                        _instance = go.GetComponent<T>();
                     }
                 }
 

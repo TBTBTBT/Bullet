@@ -12,6 +12,7 @@ public class BulletPhisicsExample : MonoBehaviour
         Calc,
         Pause,
         ReCalc,
+        AddElement,
         End
     }
 
@@ -115,7 +116,26 @@ public class BulletPhisicsExample : MonoBehaviour
             }
         }
         },
-
+        {State.AddElement, self =>
+        {
+            GUILayout.Label("Id :");
+            self.SetTmp("AddElementId",GUILayout.TextField(self.GetTmp("AddElementId")));
+            GUILayout.Label("PosX :");
+            self.SetTmp("AddElementX",GUILayout.TextField(self.GetTmp("AddElementX")));
+            GUILayout.Label("PosY :");
+            self.SetTmp("AddElementY",GUILayout.TextField(self.GetTmp("AddElementY")));
+            GUILayout.Label("Angle :");
+            self.SetTmp("AddElementAng",GUILayout.TextField(self.GetTmp("AddElementAng")));
+            if (GUILayout.Button("Add"))
+            {
+                self.Phisics.SetElement(
+                    new Vector2(
+                        self.GetTmpInt("AddElementX"),
+                        self.GetTmpInt("AddElementY")),
+                        self.GetTmpInt("AddElementId"));
+            }
+        }
+        },
     };
     void OnGUI()
     {

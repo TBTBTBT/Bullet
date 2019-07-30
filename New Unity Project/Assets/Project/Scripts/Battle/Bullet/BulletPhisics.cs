@@ -57,6 +57,44 @@ public struct BulletElementResult
     public bool IsActive;
     public BulletElementSet Result;
 }
+public static class BulletElementMaker
+{
+
+    public static BulletElementInput Create()
+    {
+        BulletElementInput ret = new BulletElementInput();
+        ret.Start = new BulletElementSet()
+        {
+            Pos = new Vector2PhisicsSet()
+            {
+                Cur = Vector2.zero,
+                Acc = Vector2.zero,
+                Vel = Vector2.zero
+            },
+            Angle = new FloatPhisicsSet()
+            {
+                Cur = 0,
+                Acc = 0,
+                Vel = 0
+            },
+            Radius = new FloatPhisicsSet()
+            {
+                Cur = 0,
+                Acc = 0,
+                Vel = 0,
+            },
+            Endurance = 0,
+            Strength = 0,
+            Attack = 0,
+            AttackAdditional = 0,
+
+
+
+        };
+
+        return ret;
+    }
+}
 
 public static class Extensions
 {
