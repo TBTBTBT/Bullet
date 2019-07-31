@@ -243,6 +243,10 @@ namespace Toast.Masterdata.Editor
 
             var json = MiniJSON.Json.Serialize(def);
         }
+        static string GetTemplatePath()
+        {
+            return "";
+        }
     }
 
     class TableToJson

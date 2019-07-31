@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 //角度情報や射出数
 [Serializable]
-[MasterPath("/Master/mst_unit.json")]
+[MasterPath("/Master/mst_attack.json")]
 public class MstAttackRecord : IMasterRecord
 {
     public int Id { get => id; }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 [Serializable]
-[MasterPath("/Master/mst_unit.json")]
+[MasterPath("/Master/mst_bullet.json")]
 public class MstBulletRecord : IMasterRecord
 {
     public int Id { get => id; }
@@ -15,7 +15,7 @@ public class MstBulletRecord : IMasterRecord
     public float accV;
     public int attack;
     public int priority;
-    public int LifeTimeFrame;
+    public int lifeTimeFrame;
     public int calcId;
 
 

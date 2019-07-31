@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Toast;
-
+using System.Text.RegularExpressions;
 //stateless
 //Exception : 初期化してください =>InitMasterdataAsync
 public class MasterdataManager : SingletonMonoBehaviour<MasterdataManager>
@@ -170,9 +170,13 @@ public class MasterTable<T> where T : class, IMasterRecord
         }
 #endif
 #if true
+        var ext = Regex.Match(path, "[^.]+$").Value;
+        path = Regex.Replace(path, "." + ext + "$", "");
+        path = Regex.Replace(path, "^/", "");
         Debug.Log("[Master] load from resources : " + path);
+
         string text = Resources.Load<TextAsset>(path).ToString();
-        Records = JsonUtility.FromJson<Master<T>>(text);
+        Records = JsonUtility.FromJson<Master<T>>("{\"Records\":" + text + "}");
         if (Records == null)
         {
             Records = new Master<T>() { Records = new T[0] };
