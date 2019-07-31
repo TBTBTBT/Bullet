@@ -62,6 +62,7 @@ namespace Toast.Masterdata.Editor
 
             AddRowButton();
             AddSaveToJsonButton();
+            AddLoadButton();
             GUILayout.EndVertical();
         }
 
@@ -164,16 +165,49 @@ namespace Toast.Masterdata.Editor
             }
 
         }
+
+        private void AddLoadButton()
+        {
+            if (GUILayout.Button("LOAD", GUILayout.Width(100)))
+            {
+                LoadFromJson();
+            }
+        }
         private void AddSaveToJsonButton()
         {
+            //var str = EditorUtil.DragAndDropRect();
             if (GUILayout.Button("SAVE AS", GUILayout.Width(100)))
             {
                 SaveToJson();
             }
 
         }
+
+        private void LoadFromJson()
+        {
+            var json = TableToJson.LoadFromJson();
+            if (json == null || json.Count == 0)
+            {
+                return;
+                
+            }
+            Data.Clear();
+            
+            foreach (var dictionary in json)
+            {
+                foreach (var keyValuePair in dictionary)
+                {
+                    if (!Data.ContainsKey(keyValuePair.Key))
+                    {
+                        Data.Add(keyValuePair.Key,(new List<string>(),0,50));
+                    }
+                    Data[keyValuePair.Key].Data.Add(keyValuePair.Value.ToString());
+                }
+            }
+        }
         private void SaveToJson()
         {
+            
             var max = 0;
             foreach (var l in Data)
             {
@@ -193,7 +227,7 @@ namespace Toast.Masterdata.Editor
             }
            
             
-            TableToJson.MakeJson(Application.dataPath+ "/test.json",list);
+            TableToJson.MakeJson(list);
         }
 
         private void SaveToClass()
@@ -213,11 +247,37 @@ namespace Toast.Masterdata.Editor
 
     class TableToJson
     {
-        public static void MakeJson(string path, List<Dictionary<string, string>> list)
+        public static void MakeJson( List<Dictionary<string, string>> list)
         {
             var json = MiniJSON.Json.Serialize(list);
             Debug.Log(json);
+            EditorUtil.SaveJsonDialog(json);
 
+        }
+
+        public static List<Dictionary<string, object>> LoadFromJson()
+        {
+            var d = EditorUtil.LoadDialog("json");
+            Debug.Log(d);
+            if (string.IsNullOrEmpty(d))
+            {
+                return new List<Dictionary<string, object>>();
+            }
+
+            var list = new List<Dictionary<string, object>>();
+            var json = (IList)MiniJSON.Json.Deserialize(d);
+            foreach (var o in json)
+            {
+                var dic = (IDictionary)o;
+                var ret = new Dictionary<string, object>();
+                foreach (DictionaryEntry o1 in dic)
+                {
+                    ret.Add(o1.Key.ToString(),o1.Value);
+                }
+                list.Add(ret);
+            }
+            Debug.Log(list);
+            return list;
         }
         public static void MakeDefJson()
         {
