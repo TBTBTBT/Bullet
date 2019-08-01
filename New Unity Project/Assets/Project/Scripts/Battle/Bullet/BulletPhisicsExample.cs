@@ -19,13 +19,13 @@ public class BulletPhisicsExample : MonoBehaviour
     [SerializeField] private float _timeSpan = 0.1f;
     [SerializeField] private BulletViewer _viewer;
     private Statemachine<State> _stateMachine = new Statemachine<State>();
-    private BulletPhisics Phisics { get; set; }
+    private BulletPhysics Phisics { get; set; }
     private bool CanTransition = false;
 
     void Awake()
     {
         _stateMachine.Init(this);
-        Phisics = new BulletPhisics();
+        Phisics = new BulletPhysics();
     }
 
     private IEnumerator Init()

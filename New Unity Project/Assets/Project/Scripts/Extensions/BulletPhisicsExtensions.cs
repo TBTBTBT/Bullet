@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class BulletPhisicsExtensions
 {
-    public static void SetElement(this BulletPhisics self,Vector2 pos,int atkId)
+    public static void SetElement(this BulletPhysics self,Vector2 pos,int atkId)
     {
         var attack = MasterdataManager.Get<MstAttackRecord>(atkId);
         var bullet = BulletElementMaker.Create();

@@ -26,30 +26,30 @@ public class BulletViewer : MonoBehaviour
         yield return Objects.InstantiateSphere(poolNum, stepPerFrame, () => Loading.CurrentStep++);
     }
 
-    public void UpdateView(BulletPhisics p)
+    public void UpdateView(BulletPhysics p)
     {
-        foreach(var e in p.Elements)
-        {
+        //foreach(var e in p.Elements)
+        //{
             
-            if (_managedObject.ContainsKey(e.Id))
-            {
-                //オブジェクトの更新
-                _managedObject[e.Id].transform.localPosition = e.Current.Pos.Cur;
+        //    if (_managedObject.ContainsKey(e.Id))
+        //    {
+        //        //オブジェクトの更新
+        //        _managedObject[e.Id].transform.localPosition = e.Current.Pos.Cur;
                 
-                if (!e.IsActive(p.FrameCount))
-                {   //アクティブではないがオブジェクトがある
-                    Objects.Unuse(_managedObject[e.Id]);
-                    _managedObject.Remove(e.Id);
-                }
+        //        if (!e.IsActive(p.FrameCount))
+        //        {   //アクティブではないがオブジェクトがある
+        //            Objects.Unuse(_managedObject[e.Id]);
+        //            _managedObject.Remove(e.Id);
+        //        }
                 
 
-            }
-            else if (e.IsActive(p.FrameCount))
-            {
-                //アクティブでオブジェクトがない
-                _managedObject.Add(e.Id, Objects.GetObject());
-            }
-        }
+        //    }
+        //    else if (e.IsActive(p.FrameCount))
+        //    {
+        //        //アクティブでオブジェクトがない
+        //        _managedObject.Add(e.Id, Objects.GetObject());
+        //    }
+        //}
        
     }
 }

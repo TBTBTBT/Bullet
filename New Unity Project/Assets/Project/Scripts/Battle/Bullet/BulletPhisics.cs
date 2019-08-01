@@ -6,162 +6,47 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
 [Serializable]
-public struct FloatPhisicsSet
-{
-    public float Cur;
-    public float Vel;
-    public float Acc;
-
-}
-[Serializable]
-public struct Vector2PhisicsSet
-{
-    public Vector2 Cur;
-    public Vector2 Vel;
-    public Vector2 Acc;
-
-}
-
-[Serializable]
-public struct BulletElementSet
-{
-    public Vector2PhisicsSet Pos;//位置
-    public FloatPhisicsSet Angle;//向き
-    public FloatPhisicsSet Radius;
-    public int Strength;//貫通力
-    public int Endurance;//耐久値 Strength比較で同値か低い方-1 0になると破棄
-    public int Attack;
-    public int AttackAdditional;
-
-}
-[Serializable]
-public struct BulletElementInput
-{
-    public int Frame;
-    public BulletElementSet Start;
-    public Func<BulletPhisics, Vector2> OriginalMove;
-}
-[Serializable]
-public struct BulletElementInfo
-{
-    public int Id;
-    public BulletElementInput Input;
-    public int EndFrame;//最後の生存F
-
-    public BulletElementSet Current;
-}
-[Serializable]
-public struct BulletElementResult
-{
-    public int CurrentFrame;
-    public bool IsActive;
-    public BulletElementSet Result;
-}
-public static class BulletElementMaker
+public class BulletPhysics
 {
 
-    public static BulletElementInput Create()
-    {
-        BulletElementInput ret = new BulletElementInput();
-        ret.Start = new BulletElementSet()
-        {
-            Pos = new Vector2PhisicsSet()
-            {
-                Cur = Vector2.zero,
-                Acc = Vector2.zero,
-                Vel = Vector2.zero
-            },
-            Angle = new FloatPhisicsSet()
-            {
-                Cur = 0,
-                Acc = 0,
-                Vel = 0
-            },
-            Radius = new FloatPhisicsSet()
-            {
-                Cur = 0,
-                Acc = 0,
-                Vel = 0,
-            },
-            Endurance = 0,
-            Strength = 0,
-            Attack = 0,
-            AttackAdditional = 0,
+    private List<BulletElementInput> _inputs = new List<BulletElementInput>();
+    //public List<BulletElementInfo> Elements => _elements;
+    private GameObject _root;
+    private ObjectPool Objects { get; set; }
+    //private Dictionary<int, GameObject> _managedObject = new Dictionary<int, GameObject>();
 
-
-
-        };
-
-        return ret;
-    }
-}
-
-public static class Extensions
-{
-    //public static T DeepCopy<T>(this T src)
-    //{
-    //    using (var memoryStream = new MemoryStream())
-    //    {
-    //        var binaryFormatter = new BinaryFormatter();
-    //        binaryFormatter.Serialize(memoryStream, src);
-    //        memoryStream.Seek(0, System.IO.SeekOrigin.Begin);
-    //        return (T)binaryFormatter.Deserialize(memoryStream);
-    //    }
-    //}
-
-    public static bool IsActive(this BulletElementInfo self,int frame)
-    {
-        return self.Input.Frame <= frame && ( self.EndFrame == -1 || frame <= self.EndFrame );
-    }
-
-    public static Vector2PhisicsSet CalcOnce(this Vector2PhisicsSet self,float span)
-    {
-        self.Cur += self.Vel * span;
-        self.Vel += self.Acc * span;
-        return self;
-    }
-}
-
-//public class SnapShot<T> where T : class
-//{
-//    public T Data { get; set; }
-//    public SnapShot(T data)
-//    {
-//        Data = data.DeepCopy();
-//    }
-
-//}
-[Serializable]
-public class BulletPhisics
-{
-
-    private List<BulletElementInfo> _elements = new List<BulletElementInfo>();
-    public List<BulletElementInfo> Elements => _elements;
     public int FrameCount { get; private set; }
     public float Time { get; private set; }
     public float Span { get; private set; }
     public int IdCount {get;set;} = 0;
     //private List<SnapShot<BulletPhisics>> _snapShots = new List<SnapShot<BulletPhisics>>();
     #region Public
-
+    public IEnumerator Init(int pool,int step,Action stepAction)
+    {
+        Physics.autoSimulation = false;
+        _root = new GameObject();
+        Objects = new ObjectPool();
+        yield return Objects.InstantiateAction(CreateObject, pool, step, stepAction);
+    }
     public void Reset()
     {
-        _elements.Clear();
+        //_elements.Clear();
         FrameCount = 0;
         Time = 0;
         IdCount = 0;
     }
     public void SetElement(BulletElementInput element)
     {
-        var e = new BulletElementInfo { Input = element };
+        //var e = new BulletElementInfo { Input = element };
         IdCount++;
-        e.Id = IdCount;
-        e.EndFrame = -1;
+        //e.Id = IdCount;
+        //e.EndFrame = -1;
+        _inputs.Add(element);
         if (element.Frame < Time)
         {//計算し直し
             ReCalc(element.Frame,FrameCount);
         }
-        _elements.Add(e);
+        //_elements.Add(e);
     }
 
     public void SetTimeSpan(float span)
@@ -199,46 +84,121 @@ public class BulletPhisics
     //計算
     private void CalcOnce()
     {
+        CheckActive();
         PreMove();
-        HitCheck();
-        ResolveCollision();
-        AfterMove();
-    }
-
-    private void PreMove()
-    {
-        foreach (var bulletElementInfo in _elements)
-        {
-            if (!bulletElementInfo.IsActive(FrameCount))
-            {
-                continue;
-            }
-            //bulletElementInfo.Input.OriginalMove
-            bulletElementInfo.Current.Pos.CalcOnce(Span);
-        }
-    }
-
-    private void HitCheck()
-    {
+        Physics.Simulate(Span);
 
     }
-
-    private void ResolveCollision()
-    {
-
-    }
-
-    private void AfterMove()
-    {
-
-    }
-    //汎用
     private void SetTime(int frame)
     {
         Time = Span * frame;
     }
+    private void PreMove()
+    {
+        foreach(var o in Objects.Objects)
+        {
+            o.Obj.GetComponent<BulletComponent>().Move();
+
+        }
+        
+    }
+    private void CheckActive()
+    {
+        foreach (var o in Objects.Objects)
+        {
+            o.Obj.GetComponent<BulletComponent>().CheckActivate(FrameCount);
+
+        }
+    }
+
+    //汎用
+    private GameObject CreateObject()
+    {
+        var go = new GameObject();
+        if (_root != null)
+        {
+            go.transform.parent = _root.transform;
+        }
+        go.AddComponent<BulletComponent>().Init();
+        
+        return go;
+    }
+   
     private void TakeSnapShot()
     {
     //    _snapShots.Add(new SnapShot<BulletPhisics>(this));
+    }
+}
+class BulletComponent : MonoBehaviour
+{
+    Rigidbody2D Rigidbody;
+    Collider2D Colider;
+    GameObject _aim;
+    BulletElementInput Info;
+    Vector2 _collisionResult = new Vector2(0,0);
+    bool _enableCollision = false;
+    int endFrame = int.MaxValue;
+    public void Init()
+    {
+        var rg = gameObject.AddComponent<Rigidbody2D>();
+        var cc = gameObject.AddComponent<CircleCollider2D>();
+        rg.gravityScale = 0;
+        cc.isTrigger = true;
+        Rigidbody = rg;
+        Colider = cc;
+        gameObject.transform.position = new Vector3(0, 0, 0);
+        gameObject.SetActive(false);
+    }
+    public void Set(BulletElementInput info)
+    {
+        Info = info;
+    }
+    public void SetAim(GameObject aim)
+    {
+        _aim = aim;
+    }
+    public void CheckActivate(int currentFrame)
+    {
+        if(Info == null)
+        {
+            return;
+        }
+        var isActive = Info.Frame >= currentFrame && endFrame >= currentFrame;
+        gameObject.SetActive(isActive);
+
+    }
+    public void Move()
+    {
+        if (!gameObject.activeInHierarchy)
+        {
+            return;
+        }
+        Info.Start.Pos.Vel += Info.Start.Pos.Acc;
+        if(_aim != null)
+        {
+            //追尾
+        }
+        if (_enableCollision)
+        {
+            Info.Start.Pos.Vel += _collisionResult;
+            _collisionResult = Vector2.zero;
+        }
+        Rigidbody.velocity = Info.Start.Pos.Vel;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        
+    }
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        PushBack(collision);
+    }
+    void PushBack(Collider2D c)
+    {
+
+        var rg = c.gameObject.GetComponent<Rigidbody2D>();
+        var dist = (c.transform.position - gameObject.transform.position).normalized;
+        _collisionResult = _collisionResult + (Vector2)dist * 10;
     }
 }

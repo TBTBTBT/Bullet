@@ -84,6 +84,25 @@ public class ObjectPool
             }
         }
     }
+    public IEnumerator InstantiateAction(Func<GameObject> create, int poolNum, int insPerFrame, Action stepAction = null)
+    {
+
+        Objects = new PoolObject[poolNum];
+        var count = 0;
+        for (int i = 0; i < poolNum; i++)
+        {
+            Objects[i] = new PoolObject();
+            Objects[i].Obj = create();
+            Objects[i].Obj.name = i.ToString();
+            count++;
+            if (count >= insPerFrame)
+            {
+                stepAction?.Invoke();
+                count = 0;
+                yield return null;
+            }
+        }
+    }
     public IEnumerator InstantiateSphere(int poolNum, int insPerFrame, Action stepAction = null)
     {
 
