@@ -21,7 +21,31 @@ public class Vector2PhisicsSet
     public Vector2 Acc;
 
 }
+[Serializable]
+public class CharacterElementInput
+{
+    public int Frame = 0;
+    public CharacterElementSet Start;
+}
+[Serializable]
+public class CharacterElementInfo
+{
+    public int Id;
+    public CharacterElementInput Input;
+    public CharacterElementSet Current;
+}
+[Serializable]
+public class CharacterElementSet
+{
+    public Vector2PhisicsSet Pos;//位置
+    public FloatPhisicsSet Angle;//向き
+    public FloatPhisicsSet Radius;
+    public int Hp;
+    public int Def;
+    public int Atk;
+    public int Spd;
 
+}
 [Serializable]
 public class BulletElementSet
 {
@@ -32,14 +56,17 @@ public class BulletElementSet
     public int Endurance;//耐久値 Strength比較で同値か低い方-1 0になると破棄
     public int Attack;
     public int AttackAdditional;
-
+    public FloatPhisicsSet KnockBackAngle;//向き
+    public FloatPhisicsSet KnockBackStrength;
+    public bool CanKnockBack;
 }
 [Serializable]
 public class BulletElementInput
 {
     public int Frame;
+    public int EndFrame;
     public BulletElementSet Start;
-    public Func<BulletPhysics, Vector2> OriginalMove;
+    //public Func<BulletPhysics, Vector2> OriginalMove;
 }
 [Serializable]
 public class BulletElementInfo
@@ -47,7 +74,6 @@ public class BulletElementInfo
     public int Id;
     public BulletElementInput Input;
     public int EndFrame;//最後の生存F
-
     public BulletElementSet Current;
 }
 [Serializable]
@@ -87,6 +113,7 @@ public static class BulletElementMaker
             Strength = 0,
             Attack = 0,
             AttackAdditional = 0,
+           
 
 
 

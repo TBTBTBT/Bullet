@@ -10,6 +10,7 @@ public class BulletPhisicsExample : MonoBehaviour
         Init,
         Play,
         Calc,
+        CalcOnce,
         Pause,
         ReCalc,
         AddElement,
@@ -31,9 +32,9 @@ public class BulletPhisicsExample : MonoBehaviour
     private IEnumerator Init()
     {
         CanTransition = false;
+        //yield return Phisics.Init(100,5,()=> { });
         Phisics.Reset();
         Phisics.SetTimeSpan(_timeSpan);
-        yield return _viewer.InitAsync(100,5);
         
         CanTransition = true;
         yield return null;
@@ -53,7 +54,15 @@ public class BulletPhisicsExample : MonoBehaviour
             yield return null;
         }
     }
-
+    private IEnumerator CalcOnce()
+    {
+        //while (true)
+        {
+            Phisics.Simulate();
+            _viewer.UpdateView(Phisics);
+            yield return null;
+        }
+    }
     private IEnumerator Pause()
     {
         yield return null;
@@ -112,7 +121,7 @@ public class BulletPhisicsExample : MonoBehaviour
             self.SetTmp("ReCalcTime",GUILayout.TextField(self.GetTmp("ReCalcTime")));
             if (GUILayout.Button("ReCalc"))
             {
-                self.Phisics.ReCalc(self.GetTmpInt("ReCalcTime"),self.Phisics.FrameCount);
+                self.Phisics.RecalcAll(self.GetTmpInt("ReCalcTime"));
             }
         }
         },
@@ -126,13 +135,17 @@ public class BulletPhisicsExample : MonoBehaviour
             self.SetTmp("AddElementY",GUILayout.TextField(self.GetTmp("AddElementY")));
             GUILayout.Label("Angle :");
             self.SetTmp("AddElementAng",GUILayout.TextField(self.GetTmp("AddElementAng")));
+             GUILayout.Label("Frame :");
+            self.SetTmp("AddElementFrame",GUILayout.TextField(self.GetTmp("AddElementFrame")));
             if (GUILayout.Button("Add"))
             {
                 self.Phisics.SetElement(
                     new Vector2(
                         self.GetTmpInt("AddElementX"),
                         self.GetTmpInt("AddElementY")),
-                        self.GetTmpInt("AddElementId"));
+                        0,
+                        self.GetTmpInt("AddElementId"),
+                        self.GetTmpInt("AddElementFrame"));
             }
         }
         },
@@ -154,8 +167,10 @@ public class BulletPhisicsExample : MonoBehaviour
         GUILayout.EndVertical();
         GUILayout.BeginVertical();
         GUILayout.Label("FrameCount : " + Phisics.FrameCount.ToString());
-        GUILayout.Label("Time       : " + Phisics.Time.ToString("F1"));
-        GUILayout.Label("Elements   : " + Phisics.Elements.Count.ToString("F1"));
+        GUILayout.Label("Time       : " + Phisics.NowTime.ToString("F1"));
+        GUILayout.Label("ActiveElements: " + Phisics.ActiveElements.ToString());
+        GUILayout.Label("ElementsCount: " + Phisics.ElementsCount.ToString());
+        //GUILayout.Label("Elements   : " + Phisics..Count.ToString("F1"));
 
 
         GUILayout.EndVertical();

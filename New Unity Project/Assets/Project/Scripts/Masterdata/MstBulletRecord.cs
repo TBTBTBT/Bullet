@@ -17,6 +17,10 @@ public class MstBulletRecord : IMasterRecord
     public int priority;
     public int lifeTimeFrame;
     public int calcId;
+    public float radius;
+    public float radiusVel;
+    public float radiusAcc;
+    public bool isAimTarget;
 
 
 }
