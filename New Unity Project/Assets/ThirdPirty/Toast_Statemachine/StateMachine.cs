@@ -39,6 +39,7 @@ namespace Toast
 
         public int StateListNum => _stateList.Count;
         public T GetCurrentState() => _currentState;
+        public T Current => _currentState;
         public string StateName() => _currentState.ToString();
         public bool IsContinued() => _currentResult;
 
