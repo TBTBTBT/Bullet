@@ -19,7 +19,6 @@ public class DiceSequence : NestSequence<DiceSequence.State>
     protected override State EndState() => State.End;
     public UnityEvent OnRollStart = new UnityEvent();
     public UnityEvent OnThrow = new UnityEvent();
-    public UnityEvent OnShow = new UnityEvent();
     public UnityEvent OnEnd = new UnityEvent();
     public UnityEvent OnUseTurnAction = new UnityEvent();//ターン消費が確定
     public DiceSequence(System.Action<DiceSequence> init)
@@ -51,7 +50,7 @@ public class DiceSequence : NestSequence<DiceSequence.State>
     IEnumerator Show()
     {
         Debug.Log("[DiceSeq] Show");
-        OnShow?.Invoke();
+        OnUseTurnAction?.Invoke();
         _statemachine.Next(State.End);
         yield return null;
     }

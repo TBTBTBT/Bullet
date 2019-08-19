@@ -20,29 +20,29 @@ public class InputManager : SingletonMonoBehaviour<InputManager>
     {
         yield return _menuInput.WaitForButton(text,pos,cb);
     }
-    public IEnumerator WaitForButton(PlayerModelBase playerModel, string text, Vector2 pos = default, Action cb = null)
+    public IEnumerator WaitForButton(PlayerModel playerModel, string text, Vector2 pos = default, Action cb = null)
     {
         yield return null;
     }
-    public IEnumerator WaitForSelect<T>(PlayerModelBase playerModel, Action<T> cb) where T : struct
+    public IEnumerator WaitForSelect<T>(PlayerModel playerModel, Action<T> cb) where T : struct
     {
         if (!_gameInput.ContainsKey(playerModel.Id)) {
-            switch (playerModel)
+            switch (playerModel.Type)
             {
-                case LocalPlayerModel p:
+                case PlayerType.Local:
                     _gameInput.Add(playerModel.Id, new InputLocal());
                     break;
-                case NetworkPlayerModel p:
+                case PlayerType.Network:
                     _gameInput.Add(playerModel.Id, new InputNetwork());
                     break;
-                case ComPlayerModel p:
-
+                case PlayerType.Com:
+                    _gameInput.Add(playerModel.Id, new InputLocal());
                     break;
             }
-           
+
         }
         yield return _gameInput[playerModel.Id].WaitForSelect<T>(cb);
-       
+
     }
 }
 

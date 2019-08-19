@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+public enum ParalellType
+{
+    All,//すべて終了するまで
+    Some,//どれか終了し次第
+}
 public static class IEnumeratorExtensions
 {
     public static IEnumerator Paralell(this IEnumerator func, params IEnumerator[] funcs)
