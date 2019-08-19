@@ -42,7 +42,7 @@ public class GameMenuSequence : NestSequence<GameMenuSequence.State>
             MenuType selected = MenuType.Dice;
             //入力まち
             yield return InputManager.Instance.WaitForSelect<MenuType>(
-                PlayerManager.Instance.CurrentPlayer,
+                PlayerManager.Instance.CurrentPlayerModel,
                 select=>
                 {
                     selected = select;

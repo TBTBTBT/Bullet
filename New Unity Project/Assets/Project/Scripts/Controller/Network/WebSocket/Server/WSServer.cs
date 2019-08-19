@@ -31,7 +31,7 @@ public class WSServer : SingletonMonoBehaviour<WSServer>
 
     private Dictionary<Type, StringEvent> _onMessageEvents = new Dictionary<Type, StringEvent>();
     public Dictionary<Type, StringEvent> OnMessageEvents => _onMessageEvents;
-    public void OnReceiveRequest<T>(Action<T> cb) where T : PacketBase
+    public void OnReceiveRequest<T>(Action<T> cb) where T : PacketModelBase
     {
         //var packetType = typeof(T).GetPacketType();
         UnityAction<string> addEvent = str =>
@@ -47,7 +47,7 @@ public class WSServer : SingletonMonoBehaviour<WSServer>
         _onMessageEvents.Add(typeof(T), new StringEvent());
         _onMessageEvents[typeof(T)].AddListener(addEvent);
     }
-    public void RemoveEvent<T>() where T : PacketBase
+    public void RemoveEvent<T>() where T : PacketModelBase
     {
         _onMessageEvents[typeof(T)].RemoveAllListeners();
         _onMessageEvents.Remove(typeof(T));

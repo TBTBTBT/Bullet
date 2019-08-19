@@ -21,7 +21,6 @@ public class TitleSequence : NestSequence<TitleSequence.State>
     public TitleSequence(Action<TitleSequence> init = null) => init?.Invoke(this);
     protected override void InitStatemachine() => _statemachine.Init(this);
     //ここまでテンプレ
-    private MapManager _mapManager;
     //private INestSequence _nestSequence;
 
     IEnumerator Start()

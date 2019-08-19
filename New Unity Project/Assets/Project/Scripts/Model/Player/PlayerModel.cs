@@ -8,19 +8,19 @@ public enum PlayerType
     Network,
     Com
 }
-public abstract class PlayerBase
+public abstract class PlayerModelBase
 {
-    public class IntEvent : UnityEvent<int> { }
+    //public class IntEvent : UnityEvent<int> { }
     public string Id { get; set; } = "";
-    public IntEvent OnSelected = new IntEvent();
-    public IntEvent OnInputEvent = new IntEvent();
-    public abstract PlayerBase Init(string id);
+    //public IntEvent OnSelected = new IntEvent();
+    //public IntEvent OnInputEvent = new IntEvent();
+    public abstract PlayerModelBase Init(string id);
     public abstract void Update();
 
 }
-public class LocalPlayer : PlayerBase
+public class LocalPlayerModel : PlayerModelBase
 {
-    public override PlayerBase Init(string id)
+    public override PlayerModelBase Init(string id)
     {
         Id = id;
         return this;
@@ -30,9 +30,9 @@ public class LocalPlayer : PlayerBase
     {
     }
 }
-public class NetworkPlayer : PlayerBase
+public class NetworkPlayerModel : PlayerModelBase
 {
-    public override PlayerBase Init(string id)
+    public override PlayerModelBase Init(string id)
     {
         Id = id;
         return this;
@@ -42,9 +42,9 @@ public class NetworkPlayer : PlayerBase
     {
     }
 }
-public class ComPlayer : PlayerBase
+public class ComPlayerModel : PlayerModelBase
 {
-    public override PlayerBase Init(string id)
+    public override PlayerModelBase Init(string id)
     {
         Id = id;
         return this;

@@ -17,12 +17,12 @@ public enum Responce
     Ok,
     Deny,
 }
-public static class PacketManager
+public static class PacketProtocolModelExtensions
 {
-    public static string ToPacket<T>(T data, EchoType type = EchoType.Self,string sendTo = "" ) where T : PacketBase
+    public static string ToPacket<T>(T data, EchoType type = EchoType.Self,string sendTo = "" ) where T : PacketModelBase
     {
         var json = JsonUtility.ToJson(data);
-        return JsonUtility.ToJson(new PacketProtocol()
+        return JsonUtility.ToJson(new PacketProtocolModel()
         {
             PacketType = typeof(T).GetPacketType(),
             EchoType = type,
@@ -30,9 +30,9 @@ public static class PacketManager
             SendToId = sendTo
         });
     }
-    public static PacketProtocol ParseToProtocol(this string packet)
+    public static PacketProtocolModel ParseToProtocol(this string packet)
     {
-        return JsonUtility.FromJson<PacketProtocol>(packet);
+        return JsonUtility.FromJson<PacketProtocolModel>(packet);
     }
     public static T ToData<T>(this string packet)
     {
@@ -68,7 +68,7 @@ public static class PacketManager
     }
 }
 [Serializable]
-public class PacketProtocol
+public class PacketProtocolModel
 {
 
     public EchoType EchoType;
@@ -77,7 +77,7 @@ public class PacketProtocol
     public string SendToId;
 }
 [Serializable]
-public class PacketBase
+public class PacketModelBase
 {
     public Responce Res;
     public string Id;

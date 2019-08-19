@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+[Obsolete]
 public static class PlayerInputEnum
 {
 
@@ -41,6 +43,7 @@ public static class PlayerInputEnum
 
     }
 }
+[Obsolete]
 public static class ItemEnum
 {
     public enum SelectType

@@ -41,7 +41,7 @@ public class GameSequence : NestSequence<GameSequence.State>
         _statemachine.Init(this);
     }
 
-    private MapManager _mapManager;
+    private MapController _mapController;
     //private INestSequence _nestSequence;
 
     IEnumerator Start()

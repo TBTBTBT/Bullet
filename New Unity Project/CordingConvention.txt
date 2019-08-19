@@ -1,0 +1,19 @@
+MVC
+Model データ実体をもつ Controllerが呼び出せる命令を持つ
+Controller データ実態を持たない または Modelの実体を持つ または Modelかデータの参照を持つ Model,Viewの命令を呼び出す
+View 表示操作を行う Controllerが呼び出せる命令を持つ
+
+命名
+<ScriptName>::=<Primary>|<Secondary>|<Tertiary>
+<Primary>::=重複しない自由な文字列
+<Secondary>::=
+ <Primary>Model |
+ <Primary>Controller |
+ <Primary>View |
+ <Primary>ViewManager Viewにあてはまり、かつシングルトン |
+ <Primary>Manager Controllerにあてはまり、かつSequenceにあてはまらず、かつシングルトン |
+ <Primary>Sequence Controllerにあてはまり、かつシーケンス制御を行う。
+<Tertiary>::=
+ (<Secondary>|<Primary>)Base 基底クラス
+ (<Secondary>|<Primary>)Extensions 拡張メソッド定義クラス
+ (<Secondary>|<Primary>)Type Enum定義

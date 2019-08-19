@@ -36,7 +36,7 @@ public class DiceSequence : NestSequence<DiceSequence.State>
     IEnumerator RollWait()
     {
         Debug.Log("[DiceSeq] RollWait");
-        yield return InputManager.Instance.WaitForButton(PlayerManager.Instance.CurrentPlayer,"Roll");
+        yield return InputManager.Instance.WaitForButton(PlayerManager.Instance.CurrentPlayerModel,"Roll");
         OnThrow?.Invoke();
         _statemachine.Next(State.Rolling);
         yield return null;
