@@ -73,9 +73,16 @@ public class GameSequence : NestSequence<GameSequence.State>
     IEnumerator PlayerAction()
     {
         yield return new GameMenuSequence();
+        _statemachine.Next(State.PlayerEvent);
         yield return null;
 
     }
+    IEnumerator PlayerEvent()
+    {
+        yield return new GameMenuSequence();
+        _statemachine.Next(State.PlayerEvent);
+        yield return null;
 
+    }
 
 }

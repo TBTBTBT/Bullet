@@ -1,0 +1,83 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System;
+public enum PlayerEventMapType
+{
+    None,
+    Normal,
+    Shop,
+    Box,
+    Town,
+    Church,
+    Castle,
+}
+public enum PlayerEventType
+{
+    GetItem,
+    Battle,
+    
+}
+public enum PlayerEventInputType
+{
+    None,//ドラマのみ,バトルのみなど
+    Chart,//選択肢 (複数可能、木構造可能)
+    Button,
+    
+
+}
+//!とか出すか
+public enum PlayerEventNoticeType
+{
+    None,
+    Exclamation,
+
+
+}
+//public enum PlayerEventType
+//{
+//    None,
+//    //停止マップが...
+//    //1.通常の場合
+//    ComBattle,
+//    PlayerBattle,
+//    CreateEquipment,//ドカポンのガッツ
+//                    //2.ショップの場合
+//    ShopNormal,
+//    ShopAttacked,//強盗が入った
+
+//    //3.宝箱
+//    ItemBox,
+//    MagicBox,
+//    //4.教会
+//    Heal,
+//    PowerUp,
+//    //5.城
+//    HealInStart,
+
+
+
+//}
+
+[Serializable]
+public class PlayerEventModel
+{
+    public int Id;
+    public PlayerEventType Type;
+    public PlayerEventMapType MapType;
+    public PlayerEventInputType InputType;
+    public PlayerEventNoticeType NoticeType;
+    public bool Excramation;
+    //DramaModel Drama;
+    //BattleModel Battle;
+}
+//[Serializable]
+//[AttributeUsage(AttributeTargets.Field, Inherited = false)]
+//public class PlayerEvent : Attribute
+//{
+//    public Type Model;
+//    public Event(Type model)
+//    {
+//        Model = model;
+//    }
+//}
