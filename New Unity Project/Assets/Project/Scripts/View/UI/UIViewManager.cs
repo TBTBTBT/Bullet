@@ -29,7 +29,9 @@ public class UIViewManager : SingletonMonoBehaviour<UIViewManager>
     {
         Canvas = Instantiate(LoadAndPoolPrefab(Prefabs.UICanvas))?.GetComponent<Canvas>();
     }
+    #region テキスト表示
 
+    #endregion
     #region 選択メニュー(縦)
     public IEnumerable<T?> WaitForSelectUIVertical<T>() where T:struct
     {
