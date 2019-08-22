@@ -7,19 +7,20 @@ using UnityEngine.Events;
 using Toast;
 public class UIViewManager : SingletonMonoBehaviour<UIViewManager>
 {
-    enum Prefabs
+    private const string RootPath = "Prefab/";
+    public enum Prefabs
     {
-        [ResourcePath("Prefab/ui_canvas")]
+        [ResourcePath(RootPath + "ui_canvas")]
         UICanvas,
-        [ResourcePath("Prefab/ui_list_vert")]
+        [ResourcePath(RootPath + "ui_list_vert")]
         VerticalSelectList,
-        [ResourcePath("Prefab/ui_list_item_vert")]
+        [ResourcePath(RootPath + "ui_list_item_vert")]
         VerticalSelectItem,
-        [ResourcePath("Prefab/ui_matching")]
+        [ResourcePath(RootPath + "ui_matching")]
         MatchingList,
-        [ResourcePath("Prefab/ui_matching_item")]
+        [ResourcePath(RootPath + "ui_matching_item")]
         MatchingItem,
-        [ResourcePath("Prefab/ui_button_normal")]
+        [ResourcePath(RootPath + "ui_button_normal")]
         Button,
 
     }
@@ -28,6 +29,14 @@ public class UIViewManager : SingletonMonoBehaviour<UIViewManager>
     private void Awake()
     {
         Canvas = Instantiate(LoadAndPoolPrefab(Prefabs.UICanvas))?.GetComponent<Canvas>();
+    }
+
+    public void Test()
+    {
+        using (var ui = new UIStream())
+        {
+            ui.UIList();
+        }
     }
     #region テキスト表示
 
@@ -93,14 +102,17 @@ public class UIViewManager : SingletonMonoBehaviour<UIViewManager>
         return new UIObject() { GameObject = listUi };
     }
     #endregion
-    private GameObject InstantiateOn(Prefabs prefab, Transform parent)
+
+    #region プレハブ読み込み
+
+    public GameObject InstantiateOn(Prefabs prefab, Transform parent)
     {
         var go = Instantiate(LoadAndPoolPrefab(prefab));
         go.transform.parent = parent;
         go.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
         return go;
     }
-    private GameObject InstantiateOn(Prefabs prefab,Transform parent,Vector2 pos)
+    private GameObject InstantiateOn(Prefabs prefab, Transform parent, Vector2 pos)
     {
         var go = Instantiate(LoadAndPoolPrefab(prefab));
         go.transform.parent = parent;
@@ -109,7 +121,7 @@ public class UIViewManager : SingletonMonoBehaviour<UIViewManager>
     }
     private GameObject LoadAndPoolPrefab(Prefabs prefab)
     {
-        if (_prefabPool.ContainsKey(prefab)) 
+        if (_prefabPool.ContainsKey(prefab))
         {
             return _prefabPool[prefab];
         }
@@ -127,6 +139,9 @@ public class UIViewManager : SingletonMonoBehaviour<UIViewManager>
         Debug.Log("[UIViewManager]LoadPrefab");
         return Resources.Load<GameObject>(path.Path);
     }
+
+    #endregion
+
 }
 public class UIObject
 {
@@ -134,5 +149,36 @@ public class UIObject
     public void Delete()
     {
         UnityEngine.Object.Destroy(GameObject);
+    }
+}
+
+public class UIStream : IDisposable
+{
+    private List<UIObject> List = new List<UIObject>();
+
+    private GameObject AddUI(UIModelBase element)
+    {
+        var go = UIViewManager.Instance.InstantiateOn(element.PrefabPath, element.Parent);
+        go.GetComponent<RectTransform>().anchoredPosition = element.Position;
+        go.GetComponent<RectTransform>().sizeDelta = element.Size;
+        go.GetComponent<RectTransform>().localScale = element.Scale;
+    }
+    public GameObject Label(string label)
+    {
+
+    }
+    public GameObject UIList<T>(Action<T> then)
+    {
+
+    }
+
+    public void Dispose()
+    {
+        List.RemoveAll(_ =>
+        {
+            _.Delete();
+            return true;
+        });
+        Debug.Log("[UIStream] Dispose");
     }
 }
