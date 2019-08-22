@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using System.Linq;
-public class MatchingUI : MonoBehaviour
+public class MatchingUI : UIViewBase
 {
     List<SelectListItemUi> _uis;
     List<PlayerType> valueRef { get; set; }

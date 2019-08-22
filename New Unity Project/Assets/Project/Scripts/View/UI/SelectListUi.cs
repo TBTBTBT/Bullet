@@ -2,17 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SelectListUi : MonoBehaviour
+public class SelectListUi : UIViewBase
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField] private RectTransform _parent;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public RectTransform Parent => _parent;
+
 }

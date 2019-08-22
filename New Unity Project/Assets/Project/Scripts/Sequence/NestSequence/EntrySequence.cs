@@ -85,7 +85,7 @@ public class EntryManager : Singleton<EntryManager>
     public List<(string Id, PlayerType type)> Entry = new List<(string Id, PlayerType type)>();
     public List<PlayerType> _entryCapacity = new List<PlayerType>();
     public int EntryNum => _entryCapacity.Count;
-    private UIObject _selectUiBuffer = null;
+    //private UIObject _selectUiBuffer = null;
     public IEnumerator WaitForEntry()
     {
         var maxNum = 4;
@@ -94,39 +94,45 @@ public class EntryManager : Singleton<EntryManager>
             _entryCapacity.Add(PlayerType.Local);
         }
         Debug.Log("[EntryManager]WaitForEntry");
-        var ui = UIViewManager.Instance.ShowMatchingUI(ref _entryCapacity,index =>
-        {
-            OnStartSelectEntryType(_entryCapacity[index],index);
-        });
-        UIObject button = null;
-        var next = false;
-        while (!next)
-        {
-            yield return null;
-            if (EntryNum < maxNum)
+        yield return UI.Render(
+            new SelectUIModel()
             {
-                if(button != null)
-                {
-                    button.Delete();
-                    button = null;
-                }
-                continue;
+                PrefabPath = PrefabModel.UI.MatchingList,
             }
-            if (button == null)
-            {
-                button = UIViewManager.Instance.ShowButtonUI("OK", new Vector2(0, 150), () => next = true);
-            }
-        }
-        if (button != null)
-        {
-            button.Delete();
-            button = null;
-        }
+            );
+            //var ui = UIViewManager.Instance.ShowMatchingUI(ref _entryCapacity,index =>
+        //{
+        //    OnStartSelectEntryType(_entryCapacity[index],index);
+        //});
+        //UIObject button = null;
+        //var next = false;
+        //while (!next)
+        //{
+        //    yield return null;
+        //    if (EntryNum < maxNum)
+        //    {
+        //        if(button != null)
+        //        {
+        //            button.Delete();
+        //            button = null;
+        //        }
+        //        continue;
+        //    }
+        //    if (button == null)
+        //    {
+        //        button = UIViewManager.Instance.ShowButtonUI("OK", new Vector2(0, 150), () => next = true);
+        //    }
+        //}
+        //if (button != null)
+        //{
+        //    button.Delete();
+        //    button = null;
+        //}
         
 
-        ui.Delete();
-        _selectUiBuffer?.Delete();
-        _selectUiBuffer = null;
+        //ui.Delete();
+        //_selectUiBuffer?.Delete();
+        //_selectUiBuffer = null;
         ConvertEntry();
         yield return WaitNetworkPlayer();
         Debug.Log("[EntryManager]EntryFinish");
@@ -136,8 +142,8 @@ public class EntryManager : Singleton<EntryManager>
         Debug.Log("[EntryManager]Reset");
         Entry.Clear();
         _entryCapacity.Clear();
-        _selectUiBuffer?.Delete();
-        _selectUiBuffer = null;
+        //_selectUiBuffer?.Delete();
+        //_selectUiBuffer = null;
     }
     IEnumerator WaitNetworkPlayer()
     {

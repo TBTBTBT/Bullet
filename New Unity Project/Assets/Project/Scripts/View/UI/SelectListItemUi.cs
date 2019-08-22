@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using TMPro;
-public class SelectListItemUi : MonoBehaviour
+public class SelectListItemUi : UIViewBase
 {
     [SerializeField] TMP_Text _text;
     [SerializeField] Button _button;

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using TMPro;
-public class ButtonUI : MonoBehaviour
+public class ButtonUI : UIViewBase
 {
     [SerializeField] Button _button;
     [SerializeField] TMP_Text _text;
