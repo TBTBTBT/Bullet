@@ -94,12 +94,26 @@ public class EntryManager : Singleton<EntryManager>
             _entryCapacity.Add(PlayerType.Local);
         }
         Debug.Log("[EntryManager]WaitForEntry");
-        yield return UI.Render(
-            new SelectUIModel()
+        using (var ui = new UIStream())
+        {
+            var button = ui.Render<ButtonUI, ButtonUIModel>(new ButtonUIModel()
             {
-                PrefabPath = PrefabModel.UI.MatchingList,
-            }
-            );
+                PrefabPath = PrefabModel.UI.Button,
+                Label = "Ok"
+            });
+            
+            var pulldown = ui.Render<MatchingUI, PulldownListUIModel>(new PulldownListUIModel()
+            {
+                PrefabPath = PrefabModel.UI.MatchingItem,
+                ChildUIModel = new SelectItemUIModel()
+                {
+
+                }
+            });
+            button.SetActive(false);
+            yield return button.WaitForClick();
+
+        }
             //var ui = UIViewManager.Instance.ShowMatchingUI(ref _entryCapacity,index =>
         //{
         //    OnStartSelectEntryType(_entryCapacity[index],index);

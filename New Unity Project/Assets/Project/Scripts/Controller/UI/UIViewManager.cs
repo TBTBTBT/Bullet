@@ -53,6 +53,7 @@ public class UIViewManager : SingletonMonoBehaviour<UIViewManager>
         Destroy(listUi);
         yield return ret;
     }
+    
     //public UIObject ShowSelectUIVertical<T>(UnityAction<T> selectCallback) where T : struct
     //{
     //    return ShowSelectUIVertical<T>(selectCallback, Vector2.zero);
@@ -102,7 +103,7 @@ public class UIViewManager : SingletonMonoBehaviour<UIViewManager>
     public GameObject InstantiateOn(PrefabModel.UI prefab, Transform parent)
     {
         var go = Instantiate(LoadAndPoolPrefab(prefab));
-        go.transform.parent = parent;
+        go.transform.parent = parent ?? Canvas.transform;
         go.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
         return go;
     }
@@ -139,121 +140,20 @@ public class UIViewManager : SingletonMonoBehaviour<UIViewManager>
     
 }
 
-public static class UI
-{
-    public static IEnumerator Render(params UIModelBase[] elements)
-    {
-        var end = false;
 
-        using (var ui = new UIStream())
-        {
-            foreach (var uiModelBase in elements)
-            {
-                ui.AutoSwitchElement(uiModelBase,()=>end = true);
-            }
-
-            while (!end)
-            {
-
-                yield return null;
-            }
-        }
-
-    }
-
-    static void AutoSwitchElement(this UIStream stream,UIModelBase element,Action triggerAct)
-    {
-        var t = element.GetType().GetGenericArguments();
-        switch (element)
-        {
-            case LabelUIModel e:
-                stream.Render(e);
-                break;
-            case ButtonUIModel e:
-                if (e.EndTrigger)
-                {
-                    var action = e.CallbackUp;
-                    e.CallbackUp = () =>
-                    {
-                        action?.Invoke();
-                        triggerAct();
-                    };
-                }
-                stream.Render(e);
-                break;
-            case SelectUIModel e:
-                if (e.EndTrigger)
-                {
-                    var action = e.Callback;
-                    e.Callback = n =>
-                    {
-                        action?.Invoke(n);
-                        triggerAct();
-                    };
-                }
-                stream.Render(e);
-                break;
-            case SelectItemUIModel e:
-                stream.Render(e);
-                break;
-                
-        }
-    }
-}
 public class UIStream : IDisposable
 {
-    private List<UIViewBase> _objects = new List<UIViewBase>();
+    private readonly List<IDisposable> _objects = new List<IDisposable>();
 
-    private UIViewBase AddUI(UIModelBase element)
+    public T Render<T,TM>(TM element) where T : UIViewBase<TM> where TM : UIModelBase
     {
-        var go = UIViewManager.Instance.InstantiateOn(element.PrefabPath, element.Parent);
-        var component = go.GetComponent<UIViewBase>();
-        if (component == null)
-        {
-            return null;
-        }
-        go.GetComponent<RectTransform>().anchoredPosition = element.Position;
-        go.GetComponent<RectTransform>().sizeDelta = element.Size;
-        go.GetComponent<RectTransform>().localScale = element.Scale;
-        return component;
-    }
-
-    public ButtonUI Render(ButtonUIModel element)
-    {
-        var ui = AddUI(element) as ButtonUI;
-        ui.Init(element.Label,()=>element.CallbackUp());
-        return ui;
-    }
-    public LabelUI Render(LabelUIModel element)
-    {
-        var ui = AddUI(element) as LabelUI;
-        ui.Init(element.Text);
-        return ui;
-    }
-    public SelectListUi Render(SelectUIModel element)
-    {
-        
-        var ui = AddUI(element) as SelectListUi;
-        element.ChildUIModel.Parent = ui.transform;
-        for (int i = 0; i < element.Labels.Length; i++)
-        {
-            var num = i;
-            void Act() => element.Callback(num);
-            element.ChildUIModel.Label = element.Labels[i];
-            element.ChildUIModel.Callback = Act;
-           var item = Render(element.ChildUIModel);
-        }
-
-
+        var ui = UIViewManager.Instance.InstantiateOn(element.PrefabPath, element.Parent).GetComponent<T>();
+        ui.Stream = this;
+        ui.Init(element);
+        _objects.Add(ui);
         return ui;
     }
 
-    public SelectListItemUi Render(SelectItemUIModel element)
-    {
-        var ui = AddUI(element) as SelectListItemUi;
-        ui.Init(element.Label, () => element.Callback?.Invoke() );
-        return ui;
-    }
     public void Dispose()
     {
         _objects.RemoveAll(_ =>

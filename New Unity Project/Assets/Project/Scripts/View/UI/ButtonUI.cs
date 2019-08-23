@@ -4,14 +4,13 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using TMPro;
-public class ButtonUI : UIViewBase
+public class ButtonUI : UIViewBase<ButtonUIModel>
 {
     [SerializeField] Button _button;
     [SerializeField] TMP_Text _text;
-    public IEnumerator WaitForClick(string text)
+    public IEnumerator WaitForClick()
     {
         var onClick = false;
-        _text.text = text;
         _button.onClick.AddListener(() => onClick = true);
         while (!onClick)
         {
@@ -19,9 +18,15 @@ public class ButtonUI : UIViewBase
         }
         //Destroy(this.gameObject);
     }
-    public void Init(string text , UnityAction cb)
+    public override void Init(ButtonUIModel element)
     {
-        _button.onClick.AddListener(cb);
-        _text.text = text;
+        base.Init(element);
+        _button.onClick.AddListener(() => element.CallbackUp?.Invoke());
+        _text.text = element.Label;
+    }
+
+    public void SetActive(bool flag)
+    {
+        gameObject.SetActive(flag);
     }
 }

@@ -3,11 +3,18 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class LabelUI : UIViewBase
+public class LabelUI : UIViewBase<LabelUIModel>
 {
     [SerializeField] private TMP_Text _text;
-    public void Init(string text)
+    public override void Init(LabelUIModel element)
     {
-        _text.text = text;
+        base.Init(element);
+        _text.text = element.Text;
+    }
+
+    public void ChangeLabel(string l)
+    {
+        _text.text = l;
+
     }
 }

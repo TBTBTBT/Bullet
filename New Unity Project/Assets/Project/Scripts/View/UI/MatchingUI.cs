@@ -3,10 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using System.Linq;
-public class MatchingUI : UIViewBase
+public class MatchingUI : UIViewBase<PulldownListUIModel>
 {
     List<SelectListItemUi> _uis;
     List<PlayerType> valueRef { get; set; }
+
+    public virtual void Init(PulldownListUIModel element)
+    {
+        base.Init(element);
+        element.ChildUIModel.Parent = transform;
+        
+        foreach (var elementLabel in element.Labels)
+        {
+            element.ChildUIModel.Callback = num =>
+            {
+                
+            }
+            //Stream.Render<SelectListItemUi, PulldownItemUIModel>(element.ChildUIModel);
+            
+        }
+    }
     public void Init(GameObject prefab, ref List<PlayerType> value, UnityAction<int> indexCallback)
     {
         var count = 0;
