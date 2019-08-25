@@ -12,7 +12,7 @@ public class InputLocal : InputBase
         {
             var button = ui.Render<ButtonUI, ButtonUIModel>(new ButtonUIModel()
             {
-                PrefabPath = PrefabModel.UI.Button,
+                PrefabPath = PrefabModel.Path.Button,
                 Label = "Ok",
                 Position = pos
             });
@@ -22,14 +22,17 @@ public class InputLocal : InputBase
     }
     public override IEnumerator WaitForSelect<T>(Action<T> cb)
     {
-        foreach (var res in UIViewManager.Instance.WaitForSelectUIVertical<T>())
+        using (var ui = new UIStream())
         {
-            if (res != null)
+            var select = ui.Render<SelectListUi, SelectUIModel>(new SelectUIModel()
             {
-                cb((T)res);
-                break;
-            }
-            yield return null;
+                PrefabPath = PrefabModel.Path.VerticalSelectList,
+                ChildUIModel = new SelectItemUIModel()
+                {
+                    PrefabPath = PrefabModel.Path.VerticalSelectItem,
+                }
+            }.FromEnum<T>(cb));
+            yield return select.WaitForSelect();
         }
 
     }

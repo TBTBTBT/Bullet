@@ -22,7 +22,24 @@ public class InputManager : SingletonMonoBehaviour<InputManager>
     }
     public IEnumerator WaitForButton(PlayerModel playerModel, string text, Vector2 pos = default, Action cb = null)
     {
-        yield return null;
+        if (!_gameInput.ContainsKey(playerModel.Id))
+        {
+            switch (playerModel.Type)
+            {
+                case PlayerType.Local:
+                    _gameInput.Add(playerModel.Id, new InputLocal());
+                    break;
+                case PlayerType.Network:
+                    _gameInput.Add(playerModel.Id, new InputNetwork());
+                    break;
+                case PlayerType.Com:
+                    _gameInput.Add(playerModel.Id, new InputLocal());
+                    break;
+            }
+
+        }
+        yield return _gameInput[playerModel.Id].WaitForButton(text,pos,cb);
+
     }
     public IEnumerator WaitForSelect<T>(PlayerModel playerModel, Action<T> cb) where T : struct
     {

@@ -5,53 +5,31 @@ using UnityEngine.Events;
 using System.Linq;
 public class MatchingUI : UIViewBase<PulldownListUIModel>
 {
-    List<SelectListItemUi> _uis;
-    List<PlayerType> valueRef { get; set; }
+    List<PulldownItemUIView> _uis;
+    List<int> valueRef { get; set; }
 
-    public virtual void Init(PulldownListUIModel element)
+    public override void Init(PulldownListUIModel element)
     {
+        _uis = new List<PulldownItemUIView>();
+        valueRef = new List<int>();
         base.Init(element);
         element.ChildUIModel.Parent = transform;
-        
-        foreach (var elementLabel in element.Labels)
+        for (var count = 0; count < element.Length; count++)
         {
+            var c = count;
+            valueRef.Add(0);
             element.ChildUIModel.Callback = num =>
             {
-                
-            }
-            //Stream.Render<SelectListItemUi, PulldownItemUIModel>(element.ChildUIModel);
+                valueRef[c] = count;
+            };
+            _uis.Add(Stream.Render<PulldownItemUIView, PulldownItemUIModel>(element.ChildUIModel));
             
         }
     }
-    public void Init(GameObject prefab, ref List<PlayerType> value, UnityAction<int> indexCallback)
+    public List<int> Getvalues()
     {
-        var count = 0;
-        _uis = new List<SelectListItemUi>();
-        valueRef = value;
-        foreach (PlayerType l in value)
-        {
-            var c = count;
-            var item = Instantiate(prefab, transform).GetComponent<SelectListItemUi>();
-            item.Init(l.ToString(), () => indexCallback?.Invoke(c));
-            _uis.Add(item);
-            count++;
-        }
-        
+        return valueRef;
     }
-    void Update()
-    {
-        UpdataView();
-    }
-    void UpdataView()
-    {
-        var count = 0;
-        foreach (var value in valueRef)
-        {
-            if (_uis.Count > count)
-            {
-                _uis[count].SetText(value.ToString());
-            }
-            count++;
-        }
-    }
+
+   
 }

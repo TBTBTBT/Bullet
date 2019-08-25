@@ -8,7 +8,6 @@ public class DiceSequence : NestSequence<DiceSequence.State>
     {
         Start,
         RollWait,
-        Rolling,
         Show,
         Cancel,
         End
@@ -37,18 +36,15 @@ public class DiceSequence : NestSequence<DiceSequence.State>
         Debug.Log("[DiceSeq] RollWait");
         //もう決めておく
         var dice = PlayerManager.Instance.CurrentPlayerModel.Dice.Roll();
+        var anim = PrefabManager.Instance.InstantiateOn(PrefabModel.Path.DiceAnim).GetComponent<DiceView>();
         yield return InputManager.Instance.WaitForButton(PlayerManager.Instance.CurrentPlayerModel,"Roll");
+        anim.SetText(dice.ToString());
+        yield return anim.WaitForAnimation();
         OnThrow?.Invoke();
-        _statemachine.Next(State.Rolling);
-        yield return null;
-    }
-    IEnumerator Rolling()
-    {
-        Debug.Log("[DiceSeq] Rolling");
-        yield return new WaitForSecondsForStatemachine(1f);
         _statemachine.Next(State.Show);
         yield return null;
     }
+  
     IEnumerator Show()
     {
         Debug.Log("[DiceSeq] Show");

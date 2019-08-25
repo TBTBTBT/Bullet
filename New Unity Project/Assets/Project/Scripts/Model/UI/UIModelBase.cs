@@ -8,9 +8,9 @@ using UnityEngine.UI;
 public class UIModelBase
 {
     public Vector2 Position = Vector2.zero;
-    public Vector2 Size = Vector2.zero;
+    public Vector2? Size = null;
     public Vector2 Scale = Vector2.one;
-    public PrefabModel.UI PrefabPath;
+    public PrefabModel.Path PrefabPath;
     public Transform Parent = null;
 
 }
@@ -31,7 +31,7 @@ public class SelectUIModel : UIModelBase
 }
 public class PulldownListUIModel : UIModelBase
 {
-    public string[] Labels;
+    public int Length;
     public Action<int> Callback;
     public PulldownItemUIModel ChildUIModel;
     public GridLayoutGroup.Axis Axis = GridLayoutGroup.Axis.Vertical;
@@ -66,10 +66,11 @@ public static class UIModelExtensions
         model.Callback = num => cb((T)Enum.GetValues(typeof(T)).GetValue(num));
         return model;
     }
-    public static PulldownListUIModel FromEnum<T>(this PulldownListUIModel model, Action<T> cb) where T : struct
+    public static PulldownItemUIModel FromEnum<T>(this PulldownItemUIModel model, Action<T> cb = null) where T : struct
     {
         model.Labels = Enum.GetNames(typeof(T));
-        model.Callback = num => cb((T)Enum.GetValues(typeof(T)).GetValue(num));
+        //model.Callback = num => cb((T)Enum.GetValues(typeof(T)).GetValue(num));
         return model;
     }
+
 }

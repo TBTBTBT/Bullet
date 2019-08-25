@@ -13,7 +13,8 @@ public class SelectListItemUi : UIViewBase<SelectItemUIModel>
     {
         base.Init(element);
         _text.text = element.Label;
-        _button.onClick.AddListener(() =>element?.Callback?.Invoke());
+        var cb = element.Callback;
+        _button.onClick.AddListener(() => cb?.Invoke());
     }
 
     public void SetText(string text) {

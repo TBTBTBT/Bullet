@@ -35,17 +35,19 @@ public class MenuSequence : NestSequence<MenuSequence.State>
 
     IEnumerator Select()
     {
-        var select = MenuType.Title;
-        foreach (var res in UIViewManager.Instance.WaitForSelectUIVertical<MenuType>()) 
+        using (var ui = new UIStream())
         {
-            if(res != null)
+            var selectui = ui.Render<SelectListUi, SelectUIModel>(new SelectUIModel()
             {
-                select = (MenuType)res;
-                break;
-            }
-            yield return null;
+                PrefabPath = PrefabModel.Path.VerticalSelectList,
+                ChildUIModel = new SelectItemUIModel()
+                {
+                    PrefabPath = PrefabModel.Path.VerticalSelectItem,
+                }
+            }.FromEnum<MenuType>(OnSelectMenu.Invoke));
+            yield return selectui.WaitForSelect();
         }
-        OnSelectMenu?.Invoke(select);
+
         _statemachine.Next(State.End);
         yield return null;
     }

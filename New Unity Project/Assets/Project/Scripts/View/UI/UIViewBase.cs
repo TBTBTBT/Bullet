@@ -15,7 +15,7 @@ public class UIViewBase<T> : MonoBehaviour,IDisposable where T : UIModelBase
     public virtual void Init(T element)
     {
         GetComponent<RectTransform>().anchoredPosition = element.Position;
-        GetComponent<RectTransform>().sizeDelta = element.Size;
+        GetComponent<RectTransform>().sizeDelta = element.Size ?? GetComponent<RectTransform>().sizeDelta;
         GetComponent<RectTransform>().localScale = element.Scale;
 
     }

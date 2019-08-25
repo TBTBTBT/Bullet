@@ -37,14 +37,17 @@ public class EntrySequence : NestSequence<EntrySequence.State>
     IEnumerator TypeSelect()
     {
         var type = Type.Host;
-        foreach (var t in UIViewManager.Instance.WaitForSelectUIVertical<Type>()) {
-            yield return null;
-            if (t == null)
+        using (var ui = new UIStream())
+        {
+            var selectui = ui.Render<SelectListUi, SelectUIModel>(new SelectUIModel()
             {
-                
-                continue;
-            }
-            type = (Type)t;
+                PrefabPath = PrefabModel.Path.VerticalSelectList,
+                ChildUIModel = new SelectItemUIModel()
+                {
+                    PrefabPath = PrefabModel.Path.VerticalSelectItem,
+                }
+            }.FromEnum<Type>(menu => type = menu));
+            yield return selectui.WaitForSelect();
         }
         switch (type)
         {
@@ -96,21 +99,29 @@ public class EntryManager : Singleton<EntryManager>
         Debug.Log("[EntryManager]WaitForEntry");
         using (var ui = new UIStream())
         {
+            var label = ui.Render<LabelUI, LabelUIModel>(new LabelUIModel()
+            {
+                PrefabPath = PrefabModel.Path.Label,
+                Text = MessageModel.Get(MessageRecordsEnum.Matching),
+                Position = new Vector2(0, 200)
+            });
             var button = ui.Render<ButtonUI, ButtonUIModel>(new ButtonUIModel()
             {
-                PrefabPath = PrefabModel.UI.Button,
-                Label = "Ok"
+                PrefabPath = PrefabModel.Path.Button,
+                Label = "Ok",
+                Position = new Vector2(0, 100)
             });
-            
+
             var pulldown = ui.Render<MatchingUI, PulldownListUIModel>(new PulldownListUIModel()
             {
-                PrefabPath = PrefabModel.UI.MatchingItem,
-                ChildUIModel = new SelectItemUIModel()
+                Length = maxNum,
+                PrefabPath = PrefabModel.Path.MatchingList,
+                ChildUIModel = new PulldownItemUIModel()
                 {
-
-                }
+                    PrefabPath = PrefabModel.Path.MatchingItem,
+                }.FromEnum<PlayerType>()
             });
-            button.SetActive(false);
+            //button.SetActive(false);
             yield return button.WaitForClick();
 
         }
@@ -176,20 +187,18 @@ public class EntryManager : Singleton<EntryManager>
         var go = new GameObject("Server");
         go.AddComponent<WSServer>();
     }
-    void OnStartSelectEntryType(PlayerType type,int index)
-    {
-        //todo いずれプルダウンに
-        _selectUiBuffer = UIViewManager.Instance.ShowSelectUIVertical<PlayerType>(e=>OnChangeEntryType(e, index), new Vector2(100, 0));
-    }
     /// <summary>
     /// ローカル操作で追加
     /// </summary>
     /// <param name=""></param>
-    void OnChangeEntryType(PlayerType e,int index)
+    void OnChangeEntryType(List<int> selects)
     {
-        _entryCapacity[index] = e;
-        _selectUiBuffer?.Delete();
-        _selectUiBuffer = null;
+        var count = 0;
+        foreach(var s in selects)
+        {
+            _entryCapacity[count] = (PlayerType)s;
+            count++;
+        }
 
     }
     void ConvertEntry()

@@ -13,7 +13,8 @@ public class AppBoot : MonoBehaviour
         //MasterdataManager.Instance.InitMasterdata();
         CreateSingleton<InputManager>();
         CreateSingleton<WholeSequence>();
-        CreateSingleton<UIViewManager>();
+        CreateSingleton<PrefabManager>();
+        CreateSingleton<CameraManager>();
         CreateScript<DebugManager>();
     }
     private void CreateSingleton<T>() where T : SingletonMonoBehaviour<T>

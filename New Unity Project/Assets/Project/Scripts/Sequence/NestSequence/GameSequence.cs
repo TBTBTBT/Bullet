@@ -42,11 +42,13 @@ public class GameSequence : NestSequence<GameSequence.State>
     }
 
     private MapController _mapController;
+    private MapUIManager _mapUi;
     //private INestSequence _nestSequence;
 
     IEnumerator Start()
     {
         Debug.Log("[GameSequence] Init");
+
         //_nestSequence = new MenuSequence();
         //_nestSequence.Init();
         _statemachine.Next(State.Entry);
@@ -62,6 +64,10 @@ public class GameSequence : NestSequence<GameSequence.State>
     }
     IEnumerator GameStart()
     {
+        _mapController = new MapController();
+        _mapController.Init();
+        PrefabManager.Instance.InstantiateOn(PrefabModel.Path.MapUI);
+        MapUIManager.Instance.Set(_mapController.MapView);
         _statemachine.Next(State.AllEvent);
         yield return null;
     }
