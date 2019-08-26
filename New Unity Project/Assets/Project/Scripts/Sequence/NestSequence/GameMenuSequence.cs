@@ -28,6 +28,7 @@ public class GameMenuSequence : NestSequence<GameMenuSequence.State>
     {
         Debug.Log("[MenuSequence] Start");
         OnStart?.Invoke();
+        yield return InputManager.Instance.WaitForButton(PlayerManager.Instance.CurrentPlayerModel, $"{PlayerManager.Instance.CurrentPlayerIndex}のターン");
         _statemachine.Next(State.Select);
         yield return null;
     }

@@ -13,7 +13,7 @@ public class InputLocal : InputBase
             var button = ui.Render<ButtonUI, ButtonUIModel>(new ButtonUIModel()
             {
                 PrefabPath = PrefabModel.Path.Button,
-                Label = "Ok",
+                Label = text,
                 Position = pos
             });
             yield return button.WaitForClick();

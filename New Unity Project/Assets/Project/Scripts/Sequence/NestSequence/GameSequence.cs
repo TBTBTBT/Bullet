@@ -41,8 +41,9 @@ public class GameSequence : NestSequence<GameSequence.State>
         _statemachine.Init(this);
     }
 
-    private MapController _mapController;
-    private MapUIManager _mapUi;
+    private GameSystemController _game;
+
+
     //private INestSequence _nestSequence;
 
     IEnumerator Start()
@@ -64,20 +65,20 @@ public class GameSequence : NestSequence<GameSequence.State>
     }
     IEnumerator GameStart()
     {
-        _mapController = new MapController();
-        _mapController.Init();
-        PrefabManager.Instance.InstantiateOn(PrefabModel.Path.MapUI);
-        MapUIManager.Instance.Set(_mapController.MapView);
+        _game = new GameSystemController();
+        _game.Init();
         _statemachine.Next(State.AllEvent);
         yield return null;
     }
     IEnumerator AllEvent()
     {
+
         yield return null;
         _statemachine.Next(State.PlayerAction);
     }
     IEnumerator PlayerAction()
     {
+
         yield return new GameMenuSequence();
         _statemachine.Next(State.PlayerEvent);
         yield return null;
@@ -85,10 +86,24 @@ public class GameSequence : NestSequence<GameSequence.State>
     }
     IEnumerator PlayerEvent()
     {
-        yield return new GameMenuSequence();
-        _statemachine.Next(State.PlayerEvent);
+        yield return new PlayerEventSequence();
+        _statemachine.Next(State.AllEvent2);
         yield return null;
 
+    }
+    IEnumerator AllEvent2()
+    {
+        _statemachine.Next(State.NextPlayer);
+        yield return null;
+
+    }
+
+    IEnumerator NextPlayer()
+    {
+
+        _game.NextTurn();
+        _statemachine.Next(State.AllEvent);
+        yield return null;
     }
 
 }

@@ -15,6 +15,7 @@ public enum PlayerEventMapType
 public enum PlayerEventType
 {
     GetItem,
+    GetItemRandom,
     Battle,
     
 }
@@ -67,7 +68,7 @@ public class PlayerEventModel
     public PlayerEventMapType MapType;
     public PlayerEventInputType InputType;
     public PlayerEventNoticeType NoticeType;
-    public bool Excramation;
+    public int Priority;
     //DramaModel Drama;
     //BattleModel Battle;
 }
