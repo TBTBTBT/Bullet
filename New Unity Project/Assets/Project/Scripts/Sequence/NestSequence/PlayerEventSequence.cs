@@ -30,13 +30,15 @@ public class PlayerEventSequence : NestSequence<PlayerEventSequence.State>
 
     IEnumerator DecideEvent()
     {
-        var eventController= new EventController();
+        var eventController = new PlayerEventController();
         _statemachine.Next(State.Do);
         yield return null;
     }
 
     IEnumerator Do()
     {
-
+        _statemachine.Next(State.End);
+        yield return null;
+        
     }
 }
