@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,10 +12,13 @@ namespace Toast.Masterdata.Editor
 
     public class TableData
     {
+        
         public Dictionary<string, (List<string> Data,int Define, int Width)> Data = new Dictionary<string, (List<string> Data, int Define, int Width)>();
         private string labelCache = "";
         private int defineCache = 0;
         private int selectedIndexCache = 0;
+        private int selectedClassCache = 0;
+        private List<Type> _classes = new List<Type>();
         public void AddData(string label,int type)
         {
             if (label != "" && !Data.ContainsKey(label))
@@ -53,6 +57,29 @@ namespace Toast.Masterdata.Editor
 
         }
 
+        public void LoadClassList()
+        {
+            _classes.Clear();
+            foreach (Type type in
+                Assembly.GetAssembly(typeof(IMasterRecord)).GetTypes()
+                    .Where(myType =>
+                        myType.IsClass && typeof(IMasterRecord).IsAssignableFrom(myType)))
+            {
+                Debug.Log(type.ToString());
+                _classes.Add(type);
+            }
+        }
+        public void ViewClasses()
+        {
+            GUILayout.BeginVertical(GUI.skin.box,GUILayout.Width(400));
+
+            selectedClassCache = EditorGUILayout.Popup("Class", selectedClassCache, _classes.ConvertAll(_=>_.ToString()).ToArray());
+            if (GUILayout.Button("Go",GUILayout.Width(200)))
+            {
+                LoadFromClass(selectedClassCache);
+            }
+            GUILayout.EndVertical();
+        }
         public void View()
         {
 
@@ -205,6 +232,22 @@ namespace Toast.Masterdata.Editor
                 }
             }
         }
+
+        private void LoadFromClass(int index)
+        {
+            Debug.Log("Load");
+            var t = _classes[index];
+            FieldInfo[] fields 
+                = t.GetFields(BindingFlags.Default);
+            foreach (var fieldInfo in fields)
+            {
+                Debug.Log(fieldInfo);
+                Debug.Log(fieldInfo.Name);
+                Debug.Log(fieldInfo.GetType());
+            }
+            
+
+        }
         private void SaveToJson()
         {
             
@@ -229,7 +272,7 @@ namespace Toast.Masterdata.Editor
             
             TableToJson.MakeJson(list);
         }
-
+        
         private void SaveToClass()
         {
 

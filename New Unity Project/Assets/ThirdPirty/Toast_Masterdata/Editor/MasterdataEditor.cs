@@ -16,6 +16,7 @@ namespace Toast.Masterdata.Editor
         public enum State
         {
             Init,
+            Select,
             View,
         }
 
@@ -30,19 +31,48 @@ namespace Toast.Masterdata.Editor
                     self =>
                     {
                         self.Table = new TableData();
-                        self.Next(State.View);
+                        self.Menu = new MenuData();
+                        self.Next(State.Select);
 
                     }
                 },
                 {
+                    State.Select,
+                    self =>
+                    {
+                        self.Menu?.View();
+                        switch (self.Menu.Select)
+                        {
+                            case MenuData.Selected.None:
+                                break;
+                            case MenuData.Selected.Create:
+                                self.Next(State.View);
+                                break;
+                            case MenuData.Selected.LoadJson:
+                                break;
+                            case MenuData.Selected.LoadClass:
+                                self.Table.LoadClassList();
+                                self.Next(State.View);
+                                break;
+                        }
+                    }
+                },
+
+                {
                     State.View,
-                    self => { self.Table?.View(); }
+                    self =>
+                    {  GUILayout.BeginVertical(GUI.skin.box);
+                        self.Table?.ViewClasses();
+                        self.Table?.View();
+                        GUILayout.EndVertical();
+                    }
                 }
 
             };
 
         State Current { get; set; } = State.Init;
         private State NextState { get; set; } = State.Init;
+        private MenuData Menu { get; set; }
         TableData Table { get; set; }
 
         [MenuItem("Toast/MasterdataEditor")]
