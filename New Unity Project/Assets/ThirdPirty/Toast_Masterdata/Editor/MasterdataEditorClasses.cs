@@ -13,13 +13,14 @@ namespace Toast.Masterdata.Editor
     public class TableData
     {
         
-        public Dictionary<string, (List<string> Data,int Define, int Width)> Data = new Dictionary<string, (List<string> Data, int Define, int Width)>();
+        public Dictionary<string, (List<string> Data,Type Define, int Width)> Data = new Dictionary<string, (List<string> Data, Type Define, int Width)>();
+        private List<Type> _typeList = new List<Type>();
         private string labelCache = "";
         private int defineCache = 0;
         private int selectedIndexCache = 0;
         private int selectedClassCache = 0;
         private List<Type> _classes = new List<Type>();
-        public void AddData(string label,int type)
+        public void AddData(string label,Type type)
         {
             if (label != "" && !Data.ContainsKey(label))
             {
@@ -129,7 +130,7 @@ namespace Toast.Masterdata.Editor
             }
         }
 
-        private void ViewData(Dictionary<string, (List<string> Data, int Define, int Width)> data)
+        private void ViewData(Dictionary<string, (List<string> Data, Type Define, int Width)> data)
         {
             GUILayout.BeginHorizontal();
             
@@ -141,11 +142,37 @@ namespace Toast.Masterdata.Editor
                 var rect = GUILayoutUtility.GetLastRect();
                 LabelRightClickEvent(list.Key, rect);
                
-                GUILayout.Label(((MasterdataSetting.Define)list.Value.Define).ToString());
-
-                for (var i = 0; i < list.Value.Data.Count; i++)
+                GUILayout.Label((list.Value.Define).ToString());
+                Func<string, string> view = null;
+                switch (list.Value.Define)
                 {
-                    list.Value.Data[i] = GUILayout.TextField(list.Value.Data[i]);
+                    default:
+                        if (list.Value.Define.IsEnum)
+                        {
+                            view = str =>
+                            {
+                                var parse = 0;
+                                int.TryParse(str, out parse);
+                                return EditorGUILayout.Popup(parse, Enum.GetNames(list.Value.Define)).ToString();
+                            };
+                        }
+                        else
+                        {
+                            view = str =>
+                            {
+                                return GUILayout.TextField(str);
+                            };
+                        }
+                        break;
+                }
+                if (view != null)
+                {
+
+                    for (var i = 0; i < list.Value.Data.Count; i++)
+                    {
+
+                        list.Value.Data[i] = view(list.Value.Data[i]);
+                    }
                 }
                 GUILayout.EndVertical();
             }
@@ -173,11 +200,11 @@ namespace Toast.Masterdata.Editor
             //GUILayout.EndHorizontal();
             //GUILayout.BeginHorizontal();
             GUILayout.Label("type:");
-            defineCache = EditorGUILayout.Popup(defineCache, Enum.GetNames(typeof(MasterdataSetting.Define)));
+            defineCache = EditorGUILayout.Popup(defineCache, _typeList.ConvertAll(_=>_.ToString()).ToArray());
             //GUILayout.EndHorizontal();
             if (GUILayout.Button("+"))
             {
-                AddData(labelCache, defineCache);
+                AddData(labelCache, _typeList[defineCache]);
                 labelCache = "";
                 defineCache = 0;
             }
@@ -226,7 +253,7 @@ namespace Toast.Masterdata.Editor
                 {
                     if (!Data.ContainsKey(keyValuePair.Key))
                     {
-                        Data.Add(keyValuePair.Key,(new List<string>(),0,50));
+                        Data.Add(keyValuePair.Key,(new List<string>(),typeof(string),50));
                     }
                     Data[keyValuePair.Key].Data.Add(keyValuePair.Value.ToString());
                 }
@@ -238,14 +265,19 @@ namespace Toast.Masterdata.Editor
             Debug.Log("Load");
             var t = _classes[index];
             FieldInfo[] fields 
-                = t.GetFields(BindingFlags.Default);
+                = t.GetFields();
+
+            Data.Clear();
             foreach (var fieldInfo in fields)
             {
-                Debug.Log(fieldInfo);
+                if (!Data.ContainsKey(fieldInfo.Name))
+                {
+                    Data.Add(fieldInfo.Name, (new List<string>(), fieldInfo.FieldType, 50));
+                }
                 Debug.Log(fieldInfo.Name);
                 Debug.Log(fieldInfo.GetType());
             }
-            
+           
 
         }
         private void SaveToJson()
@@ -277,6 +309,8 @@ namespace Toast.Masterdata.Editor
         {
 
         }
+
+
     }
 
     class DefineToClass

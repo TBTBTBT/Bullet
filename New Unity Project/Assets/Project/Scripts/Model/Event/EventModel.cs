@@ -2,39 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-public enum PlayerEventMapType
-{
-    None,
-    Normal,
-    Shop,
-    Box,
-    Town,
-    Church,
-    Castle,
-}
-public enum PlayerEventType
-{
-    GetItem,
-    GetItemRandom,
-    Battle,
-    
-}
-public enum PlayerEventInputType
-{
-    None,//ドラマのみ,バトルのみなど
-    Chart,//選択肢 (複数可能、木構造可能)
-    Button,
-    
 
-}
-//!とか出すか
-public enum PlayerEventNoticeType
-{
-    None,
-    Exclamation,
-
-
-}
 //public enum PlayerEventType
 //{
 //    None,
