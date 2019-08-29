@@ -8,6 +8,7 @@ public class PlayerEventController
     {
         var dummy = new PlayerEventModel();
         //todo マスターから取得
+        
 
     }
 }

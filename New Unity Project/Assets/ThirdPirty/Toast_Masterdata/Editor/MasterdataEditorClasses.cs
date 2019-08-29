@@ -20,6 +20,32 @@ namespace Toast.Masterdata.Editor
         private int selectedIndexCache = 0;
         private int selectedClassCache = 0;
         private List<Type> _classes = new List<Type>();
+        private Texture2D[] _textures = new Texture2D[2] {new Texture2D(1,1),new Texture2D(1,1) };
+        private GUIStyle _tableStyleBase = new GUIStyle();
+        private GUIStyle _titleStyle = new GUIStyle();
+        private GUIStyle _oddStyle = new GUIStyle();
+        private GUIStyle _evenStyle = new GUIStyle();
+        public TableData()
+        {
+           Init();
+        }
+
+        void Init()
+        {
+            TextureInit(0, Color.white);
+            TextureInit(1, Color.gray);
+            _tableStyleBase.normal.background = _textures[0];
+            _tableStyleBase.normal.textColor = Color.black;
+            _tableStyleBase.contentOffset = Vector2.zero;
+            _titleStyle.normal.background = _textures[1];
+            _titleStyle.normal.textColor = Color.black;
+            _titleStyle.border = new RectOffset(1,0,1,0);
+        }
+        void TextureInit(int index,Color c)
+        {
+            _textures[index].SetPixel(0, 0,c);
+            _textures[index].Apply();
+        }
         public void AddData(string label,Type type)
         {
             if (label != "" && !Data.ContainsKey(label))
@@ -84,15 +110,19 @@ namespace Toast.Masterdata.Editor
         public void View()
         {
 
-            GUILayout.BeginVertical(GUI.skin.box);
-
+            Color defaultColor = GUI.backgroundColor;
+            GUI.backgroundColor = new Color(1, 1, 1);
+            GUILayout.BeginVertical(_tableStyleBase);
+        
             ViewData(Data);
 
             AddRowButton();
             AddSaveToJsonButton();
             AddLoadButton();
             GUILayout.EndVertical();
+            GUI.backgroundColor = defaultColor;
         }
+        
 
         private void LabelRightClickEvent(string label, Rect rect)
         {
@@ -136,8 +166,8 @@ namespace Toast.Masterdata.Editor
             
             foreach (var list in data)
             {
-                GUILayout.BeginVertical(GUI.skin.box, GUILayout.Width(list.Value.Width));
-                GUILayout.Label(list.Key, EditorStyles.miniButtonMid);
+                GUILayout.BeginVertical( GUILayout.Width(list.Value.Width));
+                GUILayout.Label(list.Key, _titleStyle);
                 //公式によるとリペイント時に限るらしいがこれでうまくいってるので…
                 var rect = GUILayoutUtility.GetLastRect();
                 LabelRightClickEvent(list.Key, rect);
@@ -176,7 +206,7 @@ namespace Toast.Masterdata.Editor
                 }
                 GUILayout.EndVertical();
             }
-            AddColumnButton(100);
+            // AddColumnButton(100);
             GUILayout.EndHorizontal();
         }
         //足りないところを埋める
@@ -277,7 +307,37 @@ namespace Toast.Masterdata.Editor
                 Debug.Log(fieldInfo.Name);
                 Debug.Log(fieldInfo.GetType());
             }
-           
+            Attribute[] attributes = Attribute.GetCustomAttributes(t, typeof(MasterPath));
+            if (attributes == null || attributes.Length == 0)
+            {
+                throw new InvalidOperationException("The provided object is not serializable");
+
+            }
+
+            var path = "Assets/Resources" + (attributes[0] as MasterPath).Path;
+            var d = AssetDatabase.LoadAssetAtPath<TextAsset>(path);
+            Debug.Log(path);
+            if (d == null)
+            {
+                return;
+            }
+            
+            var list = new List<Dictionary<string, object>>();
+            var json = (IList)MiniJSON.Json.Deserialize(d.text);
+            foreach (var o in json)
+            {
+                var dic = (IDictionary)o;
+                var ret = new Dictionary<string, object>();
+                foreach (DictionaryEntry o1 in dic)
+                {
+                    if (Data.ContainsKey(o1.Key.ToString()))
+                    {
+                        Data[o1.Key.ToString()].Data.Add(o1.Value.ToString());
+                    }
+                }
+            }
+          
+
 
         }
         private void SaveToJson()

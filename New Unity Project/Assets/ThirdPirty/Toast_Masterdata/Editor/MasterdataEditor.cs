@@ -32,7 +32,8 @@ namespace Toast.Masterdata.Editor
                     {
                         self.Table = new TableData();
                         self.Menu = new MenuData();
-                        self.Next(State.Select);
+                        self.Table.LoadClassList();
+                        self.Next(State.View);
 
                     }
                 },
