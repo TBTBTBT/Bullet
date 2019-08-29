@@ -20,7 +20,7 @@ namespace Toast.Masterdata.Editor
         private int selectedIndexCache = 0;
         private int selectedClassCache = 0;
         private List<Type> _classes = new List<Type>();
-        private Texture2D[] _textures = new Texture2D[2] {new Texture2D(1,1),new Texture2D(1,1) };
+        private Texture2D[] _textures = new Texture2D[2] {new Texture2D(9,9),new Texture2D(9,9) };
         private GUIStyle _tableStyleBase = new GUIStyle();
         private GUIStyle _titleStyle = new GUIStyle();
         private GUIStyle _oddStyle = new GUIStyle();
@@ -35,15 +35,37 @@ namespace Toast.Masterdata.Editor
             TextureInit(0, Color.white);
             TextureInit(1, Color.gray);
             _tableStyleBase.normal.background = _textures[0];
+            _tableStyleBase.border = new RectOffset(2, 2, 2, 2);
             _tableStyleBase.normal.textColor = Color.black;
-            _tableStyleBase.contentOffset = Vector2.zero;
+            _tableStyleBase.padding = new RectOffset(2,2,2,2);
+            _tableStyleBase.margin = new RectOffset(0, 0, 0, 0);
+            _tableStyleBase.stretchWidth = false;
+            _tableStyleBase.stretchHeight = false;
+            _tableStyleBase.wordWrap = false;
+            //            _tableStyleBase.contentOffset = Vector2.zero;
             _titleStyle.normal.background = _textures[1];
             _titleStyle.normal.textColor = Color.black;
-            _titleStyle.border = new RectOffset(1,0,1,0);
+            _titleStyle.border = new RectOffset(2, 2, 2, 2);
         }
         void TextureInit(int index,Color c)
         {
-            _textures[index].SetPixel(0, 0,c);
+            for(int i = 0; i < _textures[index].width; i++)
+            {
+                for (int y = 0; y < _textures[index].height; y++)
+                {
+                    if(i == 0 || 
+                       i == _textures[index].width - 1 ||
+                       y == 0 ||
+                       y == _textures[index].height)
+                    {
+                        _textures[index].SetPixel(i, y, Color.black);
+                    }
+                    else
+                    {
+                        _textures[index].SetPixel(i, y, c);
+                    }
+                }
+            }
             _textures[index].Apply();
         }
         public void AddData(string label,Type type)
@@ -172,7 +194,7 @@ namespace Toast.Masterdata.Editor
                 var rect = GUILayoutUtility.GetLastRect();
                 LabelRightClickEvent(list.Key, rect);
                
-                GUILayout.Label((list.Value.Define).ToString());
+                GUILayout.Label((list.Value.Define).ToString() , _tableStyleBase);
                 Func<string, string> view = null;
                 switch (list.Value.Define)
                 {
@@ -183,14 +205,14 @@ namespace Toast.Masterdata.Editor
                             {
                                 var parse = 0;
                                 int.TryParse(str, out parse);
-                                return EditorGUILayout.Popup(parse, Enum.GetNames(list.Value.Define)).ToString();
+                                return EditorGUILayout.Popup(parse, Enum.GetNames(list.Value.Define), _tableStyleBase).ToString();
                             };
                         }
                         else
                         {
                             view = str =>
                             {
-                                return GUILayout.TextField(str);
+                                return GUILayout.TextField(str , _tableStyleBase);
                             };
                         }
                         break;
