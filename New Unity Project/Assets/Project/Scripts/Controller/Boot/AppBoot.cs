@@ -9,8 +9,8 @@ public class AppBoot : MonoBehaviour
     private void Awake()
     {
 
-        //CreateSingleton<MasterdataManager>();
-        //MasterdataManager.Instance.InitMasterdata();
+        CreateSingleton<MasterdataManager>();
+        MasterdataManager.Instance.InitMasterdata();
         CreateSingleton<InputManager>();
         CreateSingleton<WholeSequence>();
         CreateSingleton<PrefabManager>();

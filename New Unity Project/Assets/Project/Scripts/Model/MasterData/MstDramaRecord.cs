@@ -7,10 +7,12 @@ public class MstDramaRecord : IMasterRecord
     public int Id { get => id; }
 
     public int id;
+    public DramaType Type;
+    public string Path;
 
 
 }
-
+[Serializable]
 public enum DramaType
 {
     None,

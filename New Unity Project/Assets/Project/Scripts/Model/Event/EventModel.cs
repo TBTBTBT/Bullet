@@ -34,7 +34,7 @@ public class PlayerEventModel
     public int Id;
     public PlayerEventType Type;
     public PlayerEventMapType MapType;
-    public PlayerEventInputType InputType;
+    //public PlayerEventInputType InputType;
     public PlayerEventNoticeType NoticeType;
     public int Priority;
     //DramaModel Drama;

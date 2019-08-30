@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEditor;
@@ -20,11 +21,41 @@ namespace Toast.Masterdata.Editor
         private int selectedIndexCache = 0;
         private int selectedClassCache = 0;
         private List<Type> _classes = new List<Type>();
-        private Texture2D[] _textures = new Texture2D[2] {new Texture2D(9,9),new Texture2D(9,9) };
-        private GUIStyle _tableStyleBase = new GUIStyle();
-        private GUIStyle _titleStyle = new GUIStyle();
-        private GUIStyle _oddStyle = new GUIStyle();
-        private GUIStyle _evenStyle = new GUIStyle();
+        private int _index = -1;
+        private enum Styles
+        {
+            Base,
+            Odd,
+            Even,
+            Select,
+            Title,
+            Odd_Enum,
+            Even_Enum
+        }
+        private Dictionary<Styles, Texture2D> _textures = new Dictionary<Styles, Texture2D>()
+        {
+            { Styles.Base, new Texture2D(15, 15)},
+            { Styles.Odd, new Texture2D(15, 15)},
+            { Styles.Even, new Texture2D(15, 15)},
+            { Styles.Select, new Texture2D(15, 15)},
+            { Styles.Title, new Texture2D(15, 15)},
+            { Styles.Odd_Enum, new Texture2D(15, 15)},
+            { Styles.Even_Enum, new Texture2D(15, 15)},
+        };
+
+        private Dictionary<Styles, GUIStyle> _styles = new Dictionary<Styles, GUIStyle>()
+        {
+            {Styles.Base, new GUIStyle()},
+            {Styles.Odd, new GUIStyle()},
+            {Styles.Even, new GUIStyle()},
+            {Styles.Select, new GUIStyle()},
+            {Styles.Title, new GUIStyle()},
+            {Styles.Odd_Enum, new GUIStyle()},
+            {Styles.Even_Enum, new GUIStyle()},
+
+        };
+
+
         public TableData()
         {
            Init();
@@ -32,33 +63,77 @@ namespace Toast.Masterdata.Editor
 
         void Init()
         {
-            TextureInit(0, Color.white);
-            TextureInit(1, Color.gray);
-            _tableStyleBase.normal.background = _textures[0];
-            _tableStyleBase.border = new RectOffset(2, 2, 2, 2);
-            _tableStyleBase.normal.textColor = Color.black;
-            _tableStyleBase.padding = new RectOffset(2,2,2,2);
-            _tableStyleBase.margin = new RectOffset(0, 0, 0, 0);
-            _tableStyleBase.stretchWidth = false;
-            _tableStyleBase.stretchHeight = false;
-            _tableStyleBase.wordWrap = false;
-            //            _tableStyleBase.contentOffset = Vector2.zero;
-            _titleStyle.normal.background = _textures[1];
-            _titleStyle.normal.textColor = Color.black;
-            _titleStyle.border = new RectOffset(2, 2, 2, 2);
+            TextureInit(Styles.Base, 1, Color.white, Color.black,true);
+            TextureInit(Styles.Odd, 1,Color.white,Color.black);
+            TextureInit(Styles.Even,1, new Color(0.9f,0.9f,0.9f), Color.black);
+            TextureInit(Styles.Select, 2, Color.white, new Color(0,0.4f,0),true);
+            TextureInit(Styles.Title, 1, Color.gray, Color.black);
+            TextureInit(Styles.Odd_Enum, 1, new Color(0.95f, 0.95f, 0.95f), Color.black);
+            TextureInit(Styles.Even_Enum, 1, new Color(0.8f, 0.8f, 0.8f), Color.black);
+            StylesInit();
+            _styles[Styles.Base].padding = new RectOffset(0,1,0,0);
+            _styles[Styles.Base].fixedHeight = 0;
+            _styles[Styles.Base].stretchHeight = false;
+            _styles[Styles.Base].stretchWidth = false;
+        } 
+
+        void StylesInit()
+        {
+            foreach (Styles style in _styles.Keys)
+            {
+                _styles[style].border = new RectOffset(3, 3, 2, 2);
+                _styles[style].normal.textColor = Color.black;
+                _styles[style].padding = new RectOffset(2,2,2,2);
+                _styles[style].wordWrap = false;
+                _styles[style].stretchHeight = false;
+                _styles[style].margin = new RectOffset(0,0,0,0);
+                _styles[style].fixedHeight = 18f;
+                _styles[style].normal.background = _textures[style];
+                //_styles[style].onFocused.background = _textures[Styles.Select];
+            }
         }
-        void TextureInit(int index,Color c)
+        void TextureInitPullDown(Styles index, int tick, Color c, Color bc, bool rightBorder = false)
+        {
+
+            for (int i = 0; i < _textures[index].width; i++)
+            {
+                for (int y = 0; y < _textures[index].height; y++)
+                {
+                    if (i < tick + 6 ||
+                        (i >= _textures[index].width - tick && rightBorder) ||
+                        y < tick ||
+                        y >= _textures[index].height - tick)
+                    {
+                        _textures[index].SetPixel(i, y, bc);
+                    }
+                    else
+                    {
+                        _textures[index].SetPixel(i, y, c);
+                    }
+                }
+            }
+
+            var arrowColor = Color.white;
+            _textures[index].SetPixel(1, 7, arrowColor);
+            _textures[index].SetPixel(2, 7, arrowColor);
+            _textures[index].SetPixel(3, 7, arrowColor);
+            _textures[index].SetPixel(4, 7, arrowColor);
+            _textures[index].SetPixel(2, 6, arrowColor);
+            _textures[index].SetPixel(3, 6, arrowColor);
+            _textures[index].Apply();
+        }
+        void TextureInit(Styles index,int tick,Color c, Color bc, bool rightBorder = false)
         {
             for(int i = 0; i < _textures[index].width; i++)
             {
                 for (int y = 0; y < _textures[index].height; y++)
                 {
-                    if(i == 0 || 
-                       i == _textures[index].width - 1 ||
-                       y == 0 ||
-                       y == _textures[index].height)
+                    if(i < tick || 
+                       (i >= _textures[index].width - tick && rightBorder) ||
+                       y < tick  ||
+                       y > _textures[index].height - tick)
                     {
-                        _textures[index].SetPixel(i, y, Color.black);
+                        _textures[index].SetPixel(i, y, bc);
                     }
                     else
                     {
@@ -90,9 +165,20 @@ namespace Toast.Masterdata.Editor
 
         void AddRow()
         {
+            var count = 0;
+            
             foreach (var list in Data)
             {
-                list.Value.Data.Add("");
+                if (count == 0 && list.Value.Define == typeof(int) && list.Value.Data.Count > 0)
+                {
+                    list.Value.Data.Add( (int.Parse(list.Value.Data.Last()) + 1).ToString());
+                }
+                else
+                {
+                    list.Value.Data.Add("");
+                }
+
+                count++;
             }
 
             CheckDataLength();
@@ -134,13 +220,13 @@ namespace Toast.Masterdata.Editor
 
             Color defaultColor = GUI.backgroundColor;
             GUI.backgroundColor = new Color(1, 1, 1);
-            GUILayout.BeginVertical(_tableStyleBase);
+            GUILayout.BeginVertical();
         
             ViewData(Data);
 
             AddRowButton();
             AddSaveToJsonButton();
-            AddLoadButton();
+            //AddLoadButton();
             GUILayout.EndVertical();
             GUI.backgroundColor = defaultColor;
         }
@@ -184,35 +270,44 @@ namespace Toast.Masterdata.Editor
 
         private void ViewData(Dictionary<string, (List<string> Data, Type Define, int Width)> data)
         {
-            GUILayout.BeginHorizontal();
-            
+            GUILayout.BeginHorizontal(_styles[Styles.Base]);
+
             foreach (var list in data)
             {
-                GUILayout.BeginVertical( GUILayout.Width(list.Value.Width));
-                GUILayout.Label(list.Key, _titleStyle);
+                
+                GUILayout.BeginVertical(GUILayout.MinWidth(list.Value.Width));
+                GUILayout.Label(list.Key, _styles[Styles.Title]);
                 //公式によるとリペイント時に限るらしいがこれでうまくいってるので…
                 var rect = GUILayoutUtility.GetLastRect();
                 LabelRightClickEvent(list.Key, rect);
                
-                GUILayout.Label((list.Value.Define).ToString() , _tableStyleBase);
-                Func<string, string> view = null;
+                GUILayout.Label((list.Value.Define).ToString() , _styles[Styles.Title]);
+                Func<string,int, string> view = null;
                 switch (list.Value.Define)
                 {
                     default:
                         if (list.Value.Define.IsEnum)
                         {
-                            view = str =>
+                           
+                            view = (str,cnt) =>
                             {
+                                var style = cnt % 2 == 0 ? _styles[Styles.Even_Enum] : _styles[Styles.Odd_Enum];
                                 var parse = 0;
                                 int.TryParse(str, out parse);
-                                return EditorGUILayout.Popup(parse, Enum.GetNames(list.Value.Define), _tableStyleBase).ToString();
+                                return EditorGUILayout.Popup(
+                                    parse,
+                                    Enum.GetNames(list.Value.Define),
+                                    style,
+                                    GUILayout.MaxHeight(style.fixedHeight)).ToString();
                             };
                         }
                         else
                         {
-                            view = str =>
+                            
+                            view = (str, cnt) =>
                             {
-                                return GUILayout.TextField(str , _tableStyleBase);
+                                var style = cnt % 2 == 0 ? _styles[Styles.Even] : _styles[Styles.Odd];
+                                return GUILayout.TextField(str , style);
                             };
                         }
                         break;
@@ -223,10 +318,11 @@ namespace Toast.Masterdata.Editor
                     for (var i = 0; i < list.Value.Data.Count; i++)
                     {
 
-                        list.Value.Data[i] = view(list.Value.Data[i]);
+                        list.Value.Data[i] = view(list.Value.Data[i],i);
                     }
                 }
                 GUILayout.EndVertical();
+  
             }
             // AddColumnButton(100);
             GUILayout.EndHorizontal();
@@ -282,9 +378,13 @@ namespace Toast.Masterdata.Editor
         private void AddSaveToJsonButton()
         {
             //var str = EditorUtil.DragAndDropRect();
-            if (GUILayout.Button("SAVE AS", GUILayout.Width(100)))
+            if (GUILayout.Button("SAVE", GUILayout.Width(100)))
             {
-                SaveToJson();
+                if (_index < 0)
+                {
+                    return;
+                }
+                SaveToJson(_index);
             }
 
         }
@@ -326,8 +426,7 @@ namespace Toast.Masterdata.Editor
                 {
                     Data.Add(fieldInfo.Name, (new List<string>(), fieldInfo.FieldType, 50));
                 }
-                Debug.Log(fieldInfo.Name);
-                Debug.Log(fieldInfo.GetType());
+
             }
             Attribute[] attributes = Attribute.GetCustomAttributes(t, typeof(MasterPath));
             if (attributes == null || attributes.Length == 0)
@@ -358,11 +457,12 @@ namespace Toast.Masterdata.Editor
                     }
                 }
             }
-          
+
+            _index = index;
 
 
         }
-        private void SaveToJson()
+        private void SaveToJson(int index)
         {
             
             var max = 0;
@@ -382,9 +482,22 @@ namespace Toast.Masterdata.Editor
                 }
                 list.Add(dic);
             }
-           
-            
-            TableToJson.MakeJson(list);
+            var t = _classes[index];
+
+            Attribute[] attributes = Attribute.GetCustomAttributes(t, typeof(MasterPath));
+            if (attributes == null || attributes.Length == 0)
+            {
+                throw new InvalidOperationException("The provided object is not serializable");
+
+            }
+
+            var path = "Assets/Resources" + (attributes[0] as MasterPath).Path;
+            var json = MiniJSON.Json.Serialize(list);
+            Debug.Log("Write Data : " + path);
+            File.WriteAllText(path,json);
+
+            //var data = AssetDatabase.LoadAssetAtPath<TextAsset>(path);
+            //TableToJson.MakeJson(list);
         }
         
         private void SaveToClass()

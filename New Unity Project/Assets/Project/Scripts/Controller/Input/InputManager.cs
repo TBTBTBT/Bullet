@@ -61,6 +61,27 @@ public class InputManager : SingletonMonoBehaviour<InputManager>
         yield return _gameInput[playerModel.Id].WaitForSelect<T>(cb);
 
     }
+    public IEnumerator WaitForSelect(PlayerModel playerModel, string[] list,Action<int> cb)
+    {
+        if (!_gameInput.ContainsKey(playerModel.Id))
+        {
+            switch (playerModel.Type)
+            {
+                case PlayerType.Local:
+                    _gameInput.Add(playerModel.Id, new InputLocal());
+                    break;
+                case PlayerType.Network:
+                    _gameInput.Add(playerModel.Id, new InputNetwork());
+                    break;
+                case PlayerType.Com:
+                    _gameInput.Add(playerModel.Id, new InputLocal());
+                    break;
+            }
+
+        }
+        yield return _gameInput[playerModel.Id].WaitForSelect(list,cb);
+
+    }
 }
 
 /*
