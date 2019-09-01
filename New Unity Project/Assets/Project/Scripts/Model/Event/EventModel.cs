@@ -36,8 +36,9 @@ public class PlayerEventModel
     public PlayerEventMapType MapType;
     //public PlayerEventInputType InputType;
     public PlayerEventNoticeType NoticeType;
+    public DramaType Drama;
     public int Priority;
-    //DramaModel Drama;
+   
     //BattleModel Battle;
 }
 //[Serializable]

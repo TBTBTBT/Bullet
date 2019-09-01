@@ -22,6 +22,8 @@ public class PlayerEventSequence : NestSequence<PlayerEventSequence.State>
     public PlayerEventSequence(Action<PlayerEventSequence> init = null) => init?.Invoke(this);
     protected override void InitStatemachine() => _statemachine.Init(this);
     //ここまでテンプレ
+    private PlayerEventController _eventController;
+
     IEnumerator Start()
     {
         _statemachine.Next(State.DecideEvent);
@@ -30,13 +32,15 @@ public class PlayerEventSequence : NestSequence<PlayerEventSequence.State>
 
     IEnumerator DecideEvent()
     {
-        var eventController = new PlayerEventController();
+        _eventController = new PlayerEventController();
+        _eventController.DecideEvent();
         _statemachine.Next(State.Do);
         yield return null;
     }
 
     IEnumerator Do()
     {
+        yield return _eventController.Play();
         _statemachine.Next(State.End);
         yield return null;
         

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,42 +15,51 @@ public class PlayerEventController
     }
     public IEnumerator Play()
     {
+        
         if (HasDrama())
         {
-            yield return Drama();
+            yield return Drama(_data.Drama);
         }
 
         yield return null;
     }
     private bool HasDrama()
     {
-        //if (_data)
+        try
         {
-            return true;
+            if (_data.Drama != DramaType.None)
+            {
+                return true;
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e);
+            return false;
         }
         return false;
     }
     
 
-    private IEnumerator Drama()
+    private IEnumerator Drama(DramaType type)
     {
-        yield return null;
+        yield return DramaManager.Instance.Play(type);
     }
-    private IEnumerator Choice()
-    {
+    //private IEnumerator Choice()
+    //{
 
-        yield return InputManager.Instance.WaitForSelect(PlayerManager.Instance.CurrentPlayerModel,new []{
-            "Dummy",
-            "Dummy",
-        }, index =>
-        {
+    //    yield return InputManager.Instance.WaitForSelect(PlayerManager.Instance.CurrentPlayerModel,new []{
+    //        "Dummy",
+    //        "Dummy",
+    //    }, index =>
+    //    {
 
-        });
-    }
-    private IEnumerator Button()
-    {
-        yield return null;
-    }
+    //    });
+    //}
+    //private IEnumerator Button()
+    //{
+    //    yield return null;
+    //}
     //抽選
     public PlayerEventModel Lottery()
     {

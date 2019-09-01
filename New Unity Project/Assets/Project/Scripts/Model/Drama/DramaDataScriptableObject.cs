@@ -2,11 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+[CreateAssetMenu(menuName = "DramaData", fileName = "Drama_00")]
 
 public class DramaDataScriptableObject : ScriptableObject
 {
+
     public DramaFrameModelSerialized[] Frame;
     public DramaNextModelSerialized[] Next;
+    //public 
+    //
 }
 [Serializable]
 public class DramaNextModelSerialized

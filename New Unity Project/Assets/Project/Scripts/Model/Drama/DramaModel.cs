@@ -2,7 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
+public enum DramaAnimationState
+{
+    None,
+    In,
+    Out,
+    Tilt,
+}
 public class DramaModel
 {
     //今のところ使わない
@@ -16,6 +22,9 @@ public class DramaModel
     public DramaFrameModel[] Frame;
     public DramaNextModel[] Next;
 
+    public ItemModel[] Rewards;
+    //public StatusModel MoveStatus;
+
 }
 
 public class DramaNextModel
@@ -23,10 +32,16 @@ public class DramaNextModel
     public string Name;//選択肢名
     public DramaType Type;
 }
+public class DramaSpriteModel
+{
+    public Sprite Sprite;
+    public string Name;
+    public DramaAnimationState AnimState;
+}
 public class DramaFrameModel
 {
-    public Sprite[] BackSprite;//若いほうが後ろ
-    public Sprite[] LeftChara;//
-    public Sprite[] RightChara;
+    public DramaSpriteModel[] BackSprite;//若いほうが後ろ
+    public DramaSpriteModel[] LeftChara;//
+    public DramaSpriteModel[] RightChara;
     public string Text;
 }

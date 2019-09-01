@@ -27,5 +27,11 @@ public class PrefabModel
         MapUI,
         [ResourcePath(RootPath + "dice_animation")]
         DiceAnim,
+
+        [ResourcePath(RootPath + "player_view")]
+        PlayerView,
+
+        [ResourcePath(RootPath + "drama_view")]
+        DramaView,
     }
 }
