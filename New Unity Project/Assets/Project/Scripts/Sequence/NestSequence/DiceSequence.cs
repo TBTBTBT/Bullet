@@ -8,6 +8,7 @@ public class DiceSequence : NestSequence<DiceSequence.State>
     {
         Start,
         RollWait,
+        Move,
         Show,
         Cancel,
         End
@@ -20,6 +21,8 @@ public class DiceSequence : NestSequence<DiceSequence.State>
     public UnityEvent OnThrow = new UnityEvent();
     public UnityEvent OnEnd = new UnityEvent();
     public UnityEvent OnUseTurnAction = new UnityEvent();//ターン消費が確定
+    public GameSystemController Game;
+    private int _diceNum = 0;
     public DiceSequence(System.Action<DiceSequence> init)
     {
         init?.Invoke(this);
@@ -36,15 +39,35 @@ public class DiceSequence : NestSequence<DiceSequence.State>
         Debug.Log("[DiceSeq] RollWait");
         //もう決めておく
         var dice = PlayerManager.Instance.CurrentPlayerModel.Dice.Roll();
+        _diceNum = dice;
         var anim = PrefabManager.Instance.InstantiateOn(PrefabModel.Path.DiceAnim).GetComponent<DiceView>();
         yield return InputManager.Instance.WaitForButton(PlayerManager.Instance.CurrentPlayerModel,"Roll");
         anim.SetText(dice.ToString());
         yield return anim.WaitForAnimation();
         OnThrow?.Invoke();
+        _statemachine.Next(State.Move);
+        yield return null;
+    }
+    IEnumerator Move()
+    {
+        yield return Game.CalcMovable(PlayerManager.Instance.CurrentPlayerModel.Status.Pos, _diceNum);
+       
+        var pos = Vector2Int.zero;
+        var decide = false;
+        while (!decide)
+        {
+            yield return InputManager.Instance.WaitForSelectMap(PlayerManager.Instance.CurrentPlayerModel,
+                p => pos = p);
+            Debug.Log($"{pos}");
+            if (Game.CheckMovable(pos))
+            {
+                decide = true;
+            }
+            yield return null;
+        }
         _statemachine.Next(State.Show);
         yield return null;
     }
-  
     IEnumerator Show()
     {
         Debug.Log("[DiceSeq] Show");

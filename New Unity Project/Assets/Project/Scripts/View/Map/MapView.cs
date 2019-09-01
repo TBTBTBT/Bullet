@@ -11,6 +11,14 @@ public class MapView : MonoBehaviour
     {
         SetTile(map);
     }
+    public Vector2 TileToWorldPos( Vector2Int pos)
+    {
+        return _back.CellToWorld((Vector3Int)pos);
+    }
+    public Vector2Int WorldToTilePos(Vector2 pos)
+    {
+        return (Vector2Int)_back.WorldToCell(pos);
+    }
     void SetTile(MapModel map)
     {
         var tileCache = new Dictionary<MapModel.TilePath, (TileBase,TileLayer)>();

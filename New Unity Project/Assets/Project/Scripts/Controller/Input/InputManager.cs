@@ -16,69 +16,50 @@ public class InputManager : SingletonMonoBehaviour<InputManager>
         _menuInput = new InputLocal();
         
     }
+    void CheckAndAddPlayer(PlayerModel playerModel)
+    {
+        if (!_gameInput.ContainsKey(playerModel.Id))
+        {
+            switch (playerModel.Type)
+            {
+                case PlayerType.Local:
+                    _gameInput.Add(playerModel.Id, new InputLocal());
+                    break;
+                case PlayerType.Network:
+                    _gameInput.Add(playerModel.Id, new InputNetwork());
+                    break;
+                case PlayerType.Com:
+                    _gameInput.Add(playerModel.Id, new InputLocal());
+                    break;
+            }
+
+        }
+    }
     public IEnumerator WaitForButton(string text,Vector2 pos = default,Action cb = null)
     {
         yield return _menuInput.WaitForButton(text,pos,cb);
     }
     public IEnumerator WaitForButton(PlayerModel playerModel, string text, Vector2 pos = default, Action cb = null)
     {
-        if (!_gameInput.ContainsKey(playerModel.Id))
-        {
-            switch (playerModel.Type)
-            {
-                case PlayerType.Local:
-                    _gameInput.Add(playerModel.Id, new InputLocal());
-                    break;
-                case PlayerType.Network:
-                    _gameInput.Add(playerModel.Id, new InputNetwork());
-                    break;
-                case PlayerType.Com:
-                    _gameInput.Add(playerModel.Id, new InputLocal());
-                    break;
-            }
-
-        }
+        CheckAndAddPlayer(playerModel);
         yield return _gameInput[playerModel.Id].WaitForButton(text,pos,cb);
 
     }
+    
+    public IEnumerator WaitForSelectMap(PlayerModel playerModel, Action<Vector2Int> cb)
+    {
+        CheckAndAddPlayer(playerModel);
+        yield return _gameInput[playerModel.Id].WaitForSelectMap(cb);
+    }
     public IEnumerator WaitForSelect<T>(PlayerModel playerModel, Action<T> cb) where T : struct
     {
-        if (!_gameInput.ContainsKey(playerModel.Id)) {
-            switch (playerModel.Type)
-            {
-                case PlayerType.Local:
-                    _gameInput.Add(playerModel.Id, new InputLocal());
-                    break;
-                case PlayerType.Network:
-                    _gameInput.Add(playerModel.Id, new InputNetwork());
-                    break;
-                case PlayerType.Com:
-                    _gameInput.Add(playerModel.Id, new InputLocal());
-                    break;
-            }
-
-        }
+        CheckAndAddPlayer(playerModel);
         yield return _gameInput[playerModel.Id].WaitForSelect<T>(cb);
 
     }
     public IEnumerator WaitForSelect(PlayerModel playerModel, string[] list,Action<int> cb)
     {
-        if (!_gameInput.ContainsKey(playerModel.Id))
-        {
-            switch (playerModel.Type)
-            {
-                case PlayerType.Local:
-                    _gameInput.Add(playerModel.Id, new InputLocal());
-                    break;
-                case PlayerType.Network:
-                    _gameInput.Add(playerModel.Id, new InputNetwork());
-                    break;
-                case PlayerType.Com:
-                    _gameInput.Add(playerModel.Id, new InputLocal());
-                    break;
-            }
-
-        }
+        CheckAndAddPlayer(playerModel);
         yield return _gameInput[playerModel.Id].WaitForSelect(list,cb);
 
     }

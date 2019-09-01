@@ -440,6 +440,7 @@ namespace Toast.Masterdata.Editor
             Debug.Log(path);
             if (d == null)
             {
+                _index = index;
                 return;
             }
             
@@ -464,7 +465,7 @@ namespace Toast.Masterdata.Editor
         }
         private void SaveToJson(int index)
         {
-            
+            Debug.Log("Save");
             var max = 0;
             foreach (var l in Data)
             {
@@ -495,7 +496,7 @@ namespace Toast.Masterdata.Editor
             var json = MiniJSON.Json.Serialize(list);
             Debug.Log("Write Data : " + path);
             File.WriteAllText(path,json);
-
+            AssetDatabase.Refresh();
             //var data = AssetDatabase.LoadAssetAtPath<TextAsset>(path);
             //TableToJson.MakeJson(list);
         }

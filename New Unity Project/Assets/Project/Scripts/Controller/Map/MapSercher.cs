@@ -61,6 +61,34 @@ public class MapSercher
     }
     private Vector2Int CanReach(ref int[,] map, Vector2Int pos, int[] directions)
     {
+        foreach (var d in directions)
+        {
+            switch (d)
+            {
+                case 0:
+                    pos.x -= 1;
+                    break;
+                case 1:
+                    pos.y -= 1;
+                    break;
+                case 2:
+                    pos.x += 1;
+                    break;
+                case 3:
+                    pos.y += 1;
+                    break;
+            }
+        }
+        //todo ここで折り返ししているかチェック
+        //
+        if(pos.x >= 0 && map.GetLength(0) > pos.x &&
+           pos.y >= 0 && map.GetLength(1) > pos.y)
+        {
+            if(map[pos.x,pos.y] == 1)
+            {
+                return pos;
+            }
+        }
         return Vector2Int.one * -1;
     }
 }

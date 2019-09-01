@@ -21,6 +21,14 @@ public class MapUIManager : SingletonMonoBehaviour<MapUIManager>,IDragHandler,IP
 
         //GetComponent<Canvas>().sortingOrder = 1;
     //}
+    public Vector2 TileToWorldPos(Vector2Int pos)
+    {
+        return _mapView.TileToWorldPos(pos);
+    }
+    public Vector2Int WorldToTilePos(Vector2 pos)
+    {
+        return _mapView.WorldToTilePos(pos);
+    }
     public void OnDrag(PointerEventData eventData)
     {
         _posBuffer = eventData.position;

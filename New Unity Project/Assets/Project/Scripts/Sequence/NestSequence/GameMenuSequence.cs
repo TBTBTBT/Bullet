@@ -24,6 +24,12 @@ public class GameMenuSequence : NestSequence<GameMenuSequence.State>
     public UnityEvent OnStart = new UnityEvent();
     public UnityEvent OnSelectMenu = new UnityEvent();
     public UnityEvent OnEnd = new UnityEvent();
+    public GameSystemController Game;
+    public GameMenuSequence(System.Action<GameMenuSequence> init)
+    {
+        init?.Invoke(this);
+    }
+
     IEnumerator Start()
     {
         Debug.Log("[MenuSequence] Start");
@@ -54,6 +60,7 @@ public class GameMenuSequence : NestSequence<GameMenuSequence.State>
                 case MenuType.Dice:
                     yield return new DiceSequence(seq =>
                     {
+                        seq.Game = Game;
                         seq.OnUseTurnAction.AddListener(() => turnEnd = true);
                     });
                     break;

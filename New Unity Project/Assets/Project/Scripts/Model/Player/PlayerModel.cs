@@ -16,17 +16,25 @@ public class PlayerModel
     public string Id = "";
     public PlayerType Type;
     public DiceModel Dice;
+    public BelongModel Belong;
+    public StatusModel Status;
+
     //public IntEvent OnSelected = new IntEvent();
     //public IntEvent OnInputEvent = new IntEvent();
     public PlayerModel Init(PlayerType type,string id)
     {
-        Id = id;
+        Init(type, id, new int[] { 1, 2, 3, 4, 5, 6 });
+
+
         return this;
     }
     public PlayerModel Init(PlayerType type, string id,int[] d)
     {
         Id = id;
         SetDice(d);
+        Belong = new BelongModel();
+        Status = new StatusModel();
+        Status.Pos = new Vector2Int(0, 0);
         return this;
     }
     public void SetDice(int[] d)
