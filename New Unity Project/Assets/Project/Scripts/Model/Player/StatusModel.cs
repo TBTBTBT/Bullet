@@ -13,6 +13,6 @@ public class StatusModel
     public int Mag;
 
     //
-    public Vector2Int Pos;
+    public int MapPos;
 
 }

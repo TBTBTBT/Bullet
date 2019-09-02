@@ -34,7 +34,7 @@ public class PlayerModel
         SetDice(d);
         Belong = new BelongModel();
         Status = new StatusModel();
-        Status.Pos = new Vector2Int(0, 0);
+        Status.MapPos = 0;
         return this;
     }
     public void SetDice(int[] d)

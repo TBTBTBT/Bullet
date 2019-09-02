@@ -7,7 +7,7 @@ using UnityEngine.Events;
 
 public class MapSercher
 {
-    public List<(Vector2Int pos, int[] dir)> Result = new List<(Vector2Int pos, int[] dir)>();
+    public List<int> Result = new List<int>();
     public UnityEvent OnUpdateResult = new UnityEvent();
     /// <summary>
     /// いけますよ
@@ -15,23 +15,20 @@ public class MapSercher
     /// <param name="pos">位置</param>
     /// <param name="num">さいころの目</param>
     /// <returns></returns>
-    public IEnumerator Search(int[,] map, Vector2Int pos, int num)
+
+    public IEnumerator Search(StationModel[] map, int pos, int num)
     {
         Result.Clear();
         var count = 0;
         var beforeLength = 0;
-        foreach (var dir in GetDirection(num))
+        foreach (var reach in CanReach(map,pos,num))
         {
-            var result = CanReach(ref map, pos, dir);
-            if (result == Vector2Int.one * -1)
-            {//到達不可能
-                continue;
-            }
-            if (Result.Any(r => r.pos == result))
+
+            if (Result.Any(r => r == reach))
             {
                 continue;
             }
-            Result.Add((result, dir));
+            Result.Add(reach);
             count++;
             if (count > 1000)
             {
@@ -48,47 +45,23 @@ public class MapSercher
         yield return null;
     }
 
-    private IEnumerable<int[]> GetDirection(int num)
+    private IEnumerable<int> CanReach(StationModel[] map, int start,int length,int before = -1)
     {
-        //組み合わせ総数
-        var allNum = Math.Pow(4, num);
-        var list = Enumerable.Repeat<int>(0, num).ToArray();
-        for (int i = 0; i < allNum; i++)
+        if (length == 0)
         {
+            yield return start;
+        }
+        foreach (var r in map[start].Relation)
+        {
+            if (r != before)
+            {
+                foreach (var reach in CanReach(map, r, length - 1, start))
+                {
+                    yield return reach;
+                }
+            }
 
-            yield return list;
         }
     }
-    private Vector2Int CanReach(ref int[,] map, Vector2Int pos, int[] directions)
-    {
-        foreach (var d in directions)
-        {
-            switch (d)
-            {
-                case 0:
-                    pos.x -= 1;
-                    break;
-                case 1:
-                    pos.y -= 1;
-                    break;
-                case 2:
-                    pos.x += 1;
-                    break;
-                case 3:
-                    pos.y += 1;
-                    break;
-            }
-        }
-        //todo ここで折り返ししているかチェック
-        //
-        if(pos.x >= 0 && map.GetLength(0) > pos.x &&
-           pos.y >= 0 && map.GetLength(1) > pos.y)
-        {
-            if(map[pos.x,pos.y] == 1)
-            {
-                return pos;
-            }
-        }
-        return Vector2Int.one * -1;
-    }
+
 }

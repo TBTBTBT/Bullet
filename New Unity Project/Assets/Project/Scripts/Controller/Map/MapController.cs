@@ -33,15 +33,23 @@ public class MapController
     }
     private MapModel SampleMap()
     {
-        var map = new int[100,100];
+        var mapWidth = 30;
+        var map = new StationModel[mapWidth * mapWidth];
         var tile = new ObjectType[100, 100];
-        for(int x = 0; x < map.GetLength(0); x++)
+        for(int x = 0; x < tile.GetLength(0); x++)
         {
-            for (int y = 0; y < map.GetLength(1); y++)
+            for (int y = 0; y < tile.GetLength(1); y++)
             {
-                map[x, y] = 1;
                 tile[x, y] = ObjectType.WeedField;
             }
+        }
+
+        for (int x = 0; x < map.Length; x++)
+        {
+            map[x] = new StationModel(x);
+            var relation = new List<int>() {x - 1, x - map.Length / mapWidth, x + 1, x + map.Length / mapWidth};
+            map[x].Pos = new Vector2Int(x % mapWidth,(int)(x / mapWidth));
+            map[x].Init(relation,map.Length);
         }
         return new MapModel()
         {

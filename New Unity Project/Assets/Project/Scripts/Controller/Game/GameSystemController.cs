@@ -17,18 +17,37 @@ public class GameSystemController
         _mapController.Init();
         PrefabManager.Instance.InstantiateOn(PrefabModel.Path.MapUI);
         MapUIManager.Instance.Set(_mapController.MapView);
-        PlayerManager.Instance.InitPlayerView();
+        foreach (var p in PlayerManager.Instance.Players)
+        {
+            PlayerManager.Instance.InitPlayerView(p.Id, GetMapPos(p.Status.MapPos));
+        }
+        
 
     }
-    public IEnumerator CalcMovable(Vector2Int start,int num)
+
+    public int GetMapIndex(Vector2Int pos)
+    {
+        var list = _mapController.MapModel.Data.Where(m => m.Pos == pos).ToList();
+        if (list.Count > 0)
+        {
+            return list[0].Id;
+        }
+
+        return -1;
+    }
+    public Vector2 GetMapPos(int pos)
+    {
+        return MapUIManager.Instance.TileToWorldPos(_mapController.MapModel.Data[pos].Pos);
+    }
+    public IEnumerator CalcMovable(int start,int num)
     {
         yield return _mapController.MapSercher.Search(_mapController.MapModel.Data, start, num);
         Debug.Log($"移動候補 {_mapController.MapSercher.Result.Count} マス");
     }
     //CalcMovableした後
-    public bool CheckMovable(Vector2Int pos)
+    public bool CheckMovable(int pos)
     {
-        var search = _mapController.MapSercher.Result.Where(p => p.pos == pos).ToArray();
+        var search = _mapController.MapSercher.Result.Where(p => p == pos).ToArray();
         return search.Length > 0;
     }
     public void NextTurn()
@@ -38,6 +57,12 @@ public class GameSystemController
         {
             Turn++;
         }
+    }
+    public void FocusPlayer()
+    {
+        CameraManager.Instance.GameCamera.transform.position =
+            new Vector3(0, 0, -10) + (Vector3)GetMapPos(PlayerManager.Instance.CurrentPlayerModel.Status.MapPos);
+
     }
     public void SaveGame()
     {

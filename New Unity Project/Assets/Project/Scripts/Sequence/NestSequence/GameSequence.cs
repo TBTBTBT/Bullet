@@ -67,7 +67,7 @@ public class GameSequence : NestSequence<GameSequence.State>
     {
         _game = new GameSystemController();
         _game.Init();
-        FocusPlayer();
+        _game.FocusPlayer();
         _statemachine.Next(State.AllEvent);
         yield return null;
     }
@@ -102,15 +102,9 @@ public class GameSequence : NestSequence<GameSequence.State>
     IEnumerator NextPlayer()
     {
         _game.NextTurn();
-        FocusPlayer();
+        _game.FocusPlayer();
         _statemachine.Next(State.AllEvent);
         yield return null;
     }
-    private void FocusPlayer()
-    {
-        CameraManager.Instance.GameCamera.transform.position =
-            new Vector3(0,0,-10) +
-           (Vector3)MapUIManager.Instance.TileToWorldPos(PlayerManager.Instance.CurrentPlayerModel.Status.Pos);
-
-    }
+    
 }

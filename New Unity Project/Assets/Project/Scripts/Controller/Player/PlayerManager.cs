@@ -11,6 +11,7 @@ public class PlayerManager : SingletonMonoBehaviour<PlayerManager>
     private int _index = 0;
     public PlayerModel CurrentPlayerModel => _players.Count >= _index && _index >= 0 ? _players[_index] : null;
     public int CurrentPlayerIndex => _index;
+    public List<PlayerModel> Players => _players;
     public void AddPlayer(string id, PlayerType type)
     {
         Debug.Log($"[PlayerManager]AddPlayer({id},{type})");
@@ -34,21 +35,18 @@ public class PlayerManager : SingletonMonoBehaviour<PlayerManager>
     }
     //view
 
-    public void InitPlayerView()
+    public void InitPlayerView(string id,Vector2 pos)
     {
-        foreach(var p in _players)
-        {
-            _playerViews.Add(p.Id,PrefabManager.Instance.InstantiateOn(PrefabModel.Path.PlayerView).GetComponent<PlayerView>());
-            MovePlayer(p.Id, true);
-        }
 
+        _playerViews.Add(id, PrefabManager.Instance.InstantiateOn(PrefabModel.Path.PlayerView).GetComponent<PlayerView>());
+        MovePlayer(pos,id, true);
     }
     
-    public void MovePlayer(string id,bool immediate = false)
+    public void MovePlayer(Vector2 pos, string id,bool immediate = false)
     {
         try
         {
-            _playerViews[id].transform.position = (Vector2)_players.First(_ => _.Id == id).Status.Pos;
+            _playerViews[id].transform.position = pos;
         }
         catch (Exception e)
         {

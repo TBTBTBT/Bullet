@@ -45,11 +45,31 @@ public class MapModel
     {
         {ObjectType.WeedField,(TilePath.WeedFloor,TileLayer.Field)},
     };
-    [SerializeField]
-    private int[,] data;
 
-    public int[,] Data { get => data; set => data = value; }
+    private StationModel[] _data;
+    public StationModel[] Data { get => _data; set => _data = value; }
     public ObjectType[,] Tile { get; set; }
 
 
+}
+/// <summary>
+/// すごろくのマス
+/// </summary>
+public class StationModel
+{
+    //public int Id;
+    public PlayerEventMapType Type;
+    public Vector2Int Pos;
+    public int[] Relation;
+    public int Id;
+
+    public StationModel(int id)
+    {
+        Id = id;
+    }
+    public void Init(List<int> relation,int len)
+    {
+       relation.RemoveAll(r => r < 0 || r >= len);
+       Relation = relation.ToArray();
+    }
 }
