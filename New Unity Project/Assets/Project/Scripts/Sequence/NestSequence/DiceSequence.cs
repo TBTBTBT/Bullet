@@ -60,7 +60,7 @@ public class DiceSequence : NestSequence<DiceSequence.State>
                 p => pos = p);
             Debug.Log($"{pos}");
 
-            if (Game.CheckMovable(pos))
+            if (Game.CheckMovable(Game.GetMapIndex(pos)))
             {
                 decide = true;
             }
