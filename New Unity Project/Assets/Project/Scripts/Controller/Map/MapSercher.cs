@@ -72,11 +72,11 @@ public class MapSercher
     }
     private (int before, List<int> list) CanReach(StationModel[] map, int start, int length, int before = -1)
     {
-        if (length == 0)
+        if (length < 0)
         {
             return (start,new List<int>() { start });
         }
-        Debug.Log(length);
+        Debug.Log("s :" +start+ ", rem" +length);
         var list = new List<int>();
         foreach (var r in map[start].Relation)
         {

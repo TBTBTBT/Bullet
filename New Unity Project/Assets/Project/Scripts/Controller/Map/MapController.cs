@@ -48,6 +48,15 @@ public class MapController
         {
             map[x] = new StationModel(x);
             var relation = new List<int>() {x - 1, x - map.Length / mapWidth, x + 1, x + map.Length / mapWidth};
+            if (x % mapWidth == 0)
+            {
+                relation.RemoveAll(r => r == x - 1);
+            }
+            if (x % mapWidth == mapWidth - 1)
+            {
+                relation.RemoveAll(r => r == x + 1);
+            }
+            
             map[x].Pos = new Vector2Int(x % mapWidth,(int)(x / mapWidth));
             map[x].Init(relation,map.Length);
         }
