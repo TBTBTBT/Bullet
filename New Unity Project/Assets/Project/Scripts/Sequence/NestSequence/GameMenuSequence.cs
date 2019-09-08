@@ -44,16 +44,25 @@ public class GameMenuSequence : NestSequence<GameMenuSequence.State>
     {
         Debug.Log("[MenuSequence] Select");
         var turnEnd = false;
+        
         while (!turnEnd)
         {
             MenuType selected = MenuType.Dice;
-            //入力まち
-            yield return InputManager.Instance.WaitForSelect<MenuType>(
-                PlayerManager.Instance.CurrentPlayerModel,
-                select=>
-                {
-                    selected = select;
-                });
+            using (var ui = new UIStream())
+            {
+                //プレイヤーの情報を表示
+                PlayerManager.Instance.CurrentPlayerModel.Parent = PrefabManager.Instance.Canvas.transform;                
+                var playerUI = ui.Render<PlayerUIView, PlayerModel>(PlayerManager.Instance.CurrentPlayerModel);
+
+               
+                //入力まち
+                yield return InputManager.Instance.WaitForSelect<MenuType>(
+                    PlayerManager.Instance.CurrentPlayerModel,
+                    select =>
+                    {
+                        selected = select;
+                    });
+            }
             OnSelectMenu?.Invoke();
             switch (selected)
             {

@@ -25,6 +25,9 @@ public class PrefabModel
         MapGrid,
         [ResourcePath(RootPath + "map_ui")]
         MapUI,
+        [ResourcePath(RootPath + "ui_player")]
+        PlayerUI,
+        
         [ResourcePath(RootPath + "dice_animation")]
         DiceAnim,
 

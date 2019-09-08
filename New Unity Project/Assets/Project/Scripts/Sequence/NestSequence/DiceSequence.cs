@@ -51,7 +51,7 @@ public class DiceSequence : NestSequence<DiceSequence.State>
     IEnumerator Move()
     {
         yield return Game.CalcMovable(PlayerManager.Instance.CurrentPlayerModel.Status.MapPos, _diceNum);
-
+        Game.SetMapCanMoveView(true);
         var pos = Vector2Int.zero;
         var decide = false;
         while (!decide)
@@ -59,9 +59,12 @@ public class DiceSequence : NestSequence<DiceSequence.State>
             yield return InputManager.Instance.WaitForSelectMap(PlayerManager.Instance.CurrentPlayerModel,
                 p => pos = p);
             Debug.Log($"{pos}");
-
-            if (Game.CheckMovable(Game.GetMapIndex(pos)))
+            var index = Game.GetMapIndex(pos);
+            if (Game.CheckMovable(index))
             {
+                PlayerManager.Instance.CurrentPlayerModel.Status.MapPos = index;
+                PlayerManager.Instance.MoveCurrentPlayer(pos);
+                Game.SetMapCanMoveView(false);
                 decide = true;
             }
             yield return null;

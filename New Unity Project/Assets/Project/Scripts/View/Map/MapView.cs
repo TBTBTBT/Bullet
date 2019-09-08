@@ -7,6 +7,8 @@ public class MapView : MonoBehaviour
     [SerializeField] Tilemap _back;
     [SerializeField] Tilemap _objects;
     [SerializeField] Tilemap _road;
+    [SerializeField] Tilemap _select;
+    TileBase _selectTile;
     public void Init(MapModel map)
     {
         SetTile(map);
@@ -47,6 +49,24 @@ public class MapView : MonoBehaviour
                 }
                 
             }
+        }
+    }
+    public void ClearSelectTile()
+    {
+        _select.ClearAllTiles();
+    }
+    public void SetSelectTile(StationModel[] elements)
+    {
+        ClearSelectTile();
+        if (_selectTile == null)
+        {
+            _selectTile = Resources.Load<TileBase>(MapModel.TilePath.SelectTile.GetAttribute<ResourcePath>().Path);
+            
+        }
+        foreach (var e in elements)
+        {
+            _select.SetTile((Vector3Int)e.Pos, _selectTile);
+            _select.SetColor((Vector3Int)e.Pos, Color.red);
         }
     }
 }

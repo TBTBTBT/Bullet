@@ -10,8 +10,13 @@ public enum PlayerType
     Com
 }
 [Serializable]
-public class PlayerModel
+public class PlayerModel : UIModelBase
 {
+    public PlayerModel()
+    {
+        PrefabPath = PrefabModel.Path.PlayerUI;
+        
+    }
     //public class IntEvent : UnityEvent<int> { }
     public string Id = "";
     public PlayerType Type;

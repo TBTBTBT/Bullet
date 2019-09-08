@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class StatusModel
+public class StatusModel : UIModelBase
 {
     public string Name;
     public int Hp;
@@ -13,6 +13,7 @@ public class StatusModel
     public int Mag;
 
     //
+    public int HpCurrent;
     public int MapPos;
 
 }

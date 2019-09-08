@@ -39,9 +39,24 @@ public class GameSystemController
     {
         return MapUIManager.Instance.TileToWorldPos(_mapController.MapModel.Data[pos].Pos);
     }
+    public void SetMapCanMoveView(bool active)
+    {
+        if (active)
+        {
+            var stations = _mapController.MapSercher.ResultToStation(_mapController.MapModel.Data);
+            _mapController.MapView.SetSelectTile(stations.ToArray());
+        }
+        else
+        {
+            _mapController.MapView.ClearSelectTile();
+        }
+    }
+
     public IEnumerator CalcMovable(int start,int num)
     {
         yield return _mapController.MapSercher.Search(_mapController.MapModel.Data, start, num);
+       
+        
         Debug.Log($"移動候補 {_mapController.MapSercher.Result.Count} マス");
     }
     //CalcMovableした後

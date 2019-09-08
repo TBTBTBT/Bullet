@@ -46,6 +46,7 @@ public class PlayerManager : SingletonMonoBehaviour<PlayerManager>
     {
         try
         {
+            
             _playerViews[id].transform.position = pos;
         }
         catch (Exception e)
@@ -53,5 +54,9 @@ public class PlayerManager : SingletonMonoBehaviour<PlayerManager>
             Debug.LogError(e);
         }
 
+    }
+    public void MoveCurrentPlayer(Vector2 pos )
+    {
+        MovePlayer(pos, CurrentPlayerModel.Id);
     }
 }
