@@ -198,6 +198,7 @@ GameObject:
   - component: {fileID: 7935862115259009217}
   - component: {fileID: 7935862115259009216}
   - component: {fileID: 7935862115259009219}
+  - component: {fileID: 456897909}
   m_Layer: 5
   m_Name: Menu
   m_TagString: Untagged
@@ -278,7 +279,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 7935862115416060355}
-  m_Horizontal: 1
+  m_Horizontal: 0
   m_Vertical: 1
   m_MovementType: 1
   m_Elasticity: 0.1
@@ -297,6 +298,32 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.ScrollRect+ScrollRectEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &456897909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7935862115259009277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96213679438a3245a3b8b1079d74dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ScrollDirection: 0
+  _scrollRect: {fileID: 7935862115259009219}
+  _allItemCount: 55
+  _viewItemCount: 10
+  Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 100
+    m_Bottom: 0
+  CellSize: {x: 100, y: 50}
+  Spacing: {x: 50, y: 50}
+  Column: 1
+  ItemPrefab: {fileID: 8071975551363415071, guid: 6b1bc972a0c2fb84da3830907c5f8df6,
+    type: 3}
 --- !u!1 &7935862115303284558
 GameObject:
   m_ObjectHideFlags: 0
@@ -433,7 +460,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7935862115416060355}
-  - component: {fileID: 13062209783718785}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -458,32 +484,8 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 300}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
---- !u!114 &13062209783718785
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7935862115416060354}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 1
-  m_StartCorner: 0
-  m_StartAxis: 0
-  m_CellSize: {x: 200, y: 50}
-  m_Spacing: {x: 0, y: 0}
-  m_Constraint: 0
-  m_ConstraintCount: 2
 --- !u!1 &7935862115685738241
 GameObject:
   m_ObjectHideFlags: 0

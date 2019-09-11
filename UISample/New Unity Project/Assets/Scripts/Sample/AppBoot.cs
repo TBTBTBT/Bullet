@@ -13,7 +13,7 @@ public class AppBoot : MonoBehaviour
         CreateSingleton<DialogSingleton>();
         CreateSingleton<PrefabManager>();
         //secondly
-        CreateScript<MainSequence>();
+        CreateSingleton<MainSequence>();
     }
     private void CreateSingleton<T>() where T : SingletonMonoBehaviour<T>
     {

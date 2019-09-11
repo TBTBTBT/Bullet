@@ -12,6 +12,8 @@ public class PrefabModel
         UICanvas,
         [ResourcePath(RootPath + "Menu")]
         Menu,
+        [ResourcePath(RootPath + "Button")]
+        Button,
     }
 }
 public class PrefabManager : SingletonMonoBehaviour<PrefabManager>
@@ -30,24 +32,44 @@ public class PrefabManager : SingletonMonoBehaviour<PrefabManager>
     #region プレハブ読み込み
     public static GameObject InstantiateOn(PrefabModel.Path prefab)
     {
-        var go = Instantiate(Instance.LoadAndPoolPrefab(prefab));
-        if (go.GetComponent<RectTransform>())
+        var p = Instance.LoadAndPoolPrefab(prefab);
+        var go = Instantiate(p);
+        go.transform.localScale = p.transform.localScale;
+        go.transform.localPosition = p.transform.localPosition;
+        var rect = go.GetComponent<RectTransform>();
+        if (rect)
         {
-            go.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+            var prect = p.GetComponent<RectTransform>();
+            rect.anchoredPosition = prect.anchoredPosition;
+            rect.sizeDelta = prect.sizeDelta;
+            rect.offsetMax = prect.offsetMax;
+            rect.offsetMin = prect.offsetMin;
         }
-        else
-        {
-            Instance.transform.position = Vector2.zero;
-        }
-
         return go;
     }
     public static GameObject InstantiateOn(PrefabModel.Path prefab, Transform parent)
     {
-        var go = Instantiate(Instance.LoadAndPoolPrefab(prefab));
+        var p = Instance.LoadAndPoolPrefab(prefab);
+        var go = Instantiate(p);
         go.transform.parent = parent;
-        go.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+        go.transform.localScale = p.transform.localScale;
+        go.transform.localPosition = p.transform.localPosition;
+        var rect = go.GetComponent<RectTransform>();
+        if (rect)
+        {
+            var prect = p.GetComponent<RectTransform>();
+            rect.anchoredPosition = prect.anchoredPosition;
+            rect.sizeDelta = prect.sizeDelta;
+            rect.offsetMax = prect.offsetMax;
+            rect.offsetMin = prect.offsetMin;
+        }
+
         return go;
+    }
+
+    public static GameObject GetPrefab(PrefabModel.Path prefab)
+    {
+        return Instance.LoadAndPoolPrefab(prefab);
     }
     private static GameObject InstantiateOn(PrefabModel.Path prefab, Transform parent, Vector2 pos)
     {
