@@ -14,6 +14,10 @@ public class PrefabModel
         Menu,
         [ResourcePath(RootPath + "Button")]
         Button,
+        [ResourcePath(RootPath + "DialogCanvas")]
+        DialogCanvas,
+        [ResourcePath(RootPath + "DialogNormal")]
+        DialogNormal,
     }
 }
 public class PrefabManager : SingletonMonoBehaviour<PrefabManager>

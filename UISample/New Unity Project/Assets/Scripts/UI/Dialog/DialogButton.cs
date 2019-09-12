@@ -10,9 +10,9 @@ namespace Toast.Rg
     public class DialogButton : MonoBehaviour
     {
         [SerializeField] private Button _button;
-        [SerializeField] private Text _text;
+        [SerializeField] private TMPro.TMP_Text _text;
         public Button Button => _button;
-        public Text Text => _text;
+        public TMPro.TMP_Text Text => _text;
     }
 
 }

@@ -20,7 +20,7 @@ namespace Toast.Rg
             End
         }
 
-        [SerializeField] private Text _text;
+        [SerializeField] private TMPro.TMP_Text _text;
         [SerializeField] private Button _nextButton;
         [SerializeField] private DialogButton _buttonPrefab;
         [SerializeField] private RectTransform _buttonRoot;
@@ -29,11 +29,15 @@ namespace Toast.Rg
         private int _pointer = 0;
         private int _msgSpeed = 1;
         private bool button = false;
+        
         void Awake()
         {
             _text.text = "";
             _statemachine.Init(this);
-            _nextButton.onClick.AddListener(DoNext);
+            if (_nextButton != null)
+            {
+                _nextButton.onClick.AddListener(DoNext);
+            }
         }
 
         public override void UpdateInStable()
@@ -43,6 +47,13 @@ namespace Toast.Rg
         public void Init(List<MessageSet> cache)
         {
             _cache = cache;
+            _pointer = 0;
+            _statemachine.Next(State.ShowAnim);
+        }
+
+        public void Init(MessageSet cache)
+        {
+            _cache = new List<MessageSet>(){cache};
             _pointer = 0;
             _statemachine.Next(State.ShowAnim);
         }
@@ -60,10 +71,16 @@ namespace Toast.Rg
         IEnumerator ShowAnim()
         {
            
+            if (_cache[_pointer].AsyncAction != null)
+            {
+                yield return _cache[_pointer].AsyncAction;
+            }
+            _cache[_pointer].Action?.Invoke();
             string disp = "";
             var strCount = 0;
             while (disp.Length != _cache[_pointer].Message.Length)
             {
+             
                 disp += _cache[_pointer].Message.Substring(strCount, 1);
                 _text.text = disp;
                 var wait = 0;
@@ -94,11 +111,14 @@ namespace Toast.Rg
             }
 
             button = false;
-            if (!isCreate)
+            if (isCreate)
             {
-                _statemachine.Next(State.Next);
+                foreach (Transform child in _buttonRoot.transform)
+                {
+                    Destroy(child.gameObject);
+                }
             }
-
+            _statemachine.Next(State.Next);
             yield return null;
         }
 
@@ -114,7 +134,7 @@ namespace Toast.Rg
                 _statemachine.Next(State.End);
             }
 
-        yield return null;
+            yield return null;
         }
         IEnumerator End()
         {
@@ -145,6 +165,7 @@ namespace Toast.Rg
             });
             b.Text.text = label;
         }
+
     }
     [Serializable]
     public class MessageSet
@@ -152,6 +173,8 @@ namespace Toast.Rg
         public string Name;
         public string Message;
         public Dictionary<string, Func<bool>> Button = null; //nullじゃなければボタン出す 戻り値はダイアログ閉じるか
+        public IEnumerator AsyncAction;
+        public Action Action;
     }
 
     

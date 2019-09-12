@@ -37,7 +37,12 @@ namespace Toast
         }
         IEnumerator Open(Dialog.InputData input)
         {
-            var ins = Instantiate(_dialogPrefab, _dialogRoot);
+            var ins = Instantiate(_dialogPrefab);
+            if (_dialogRoot != null)
+            {
+                ins.transform.parent = _dialogRoot;
+                ins.transform.localPosition = Vector3.zero;
+            }
             ins.Init(input);
             _dialogStack.Add(ins);
             Debug.Log("[ DialogSingleton ]WaitForClose");

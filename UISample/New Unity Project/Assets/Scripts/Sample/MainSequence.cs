@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Toast;
 using UnityEditor;
@@ -28,7 +29,9 @@ public class MainSequence : SingletonMonoBehaviour<MainSequence>
     private Samples _selected;
     private Dictionary<Samples,(string name,Func<INestSequence> sequence)> _samples = new Dictionary<Samples, (string name, Func<INestSequence> sequence)>()
     {
-        {Samples.Dialog1,("ダイアログシステム",() => new DialogSequence(null))}
+        {Samples.Dialog1,("ダイアログシステム",() => new DialogSequence(null))},
+        {Samples.EndlessGrid1,("デッキ編集",() => new DeckSequence(null))},
+        {Samples.EndlessGrid2,("ミッション一覧",() => new DeckSequence(null))}
     };
     private readonly Statemachine<State> _stateMachine = new Statemachine<State>();
 
@@ -44,6 +47,7 @@ public class MainSequence : SingletonMonoBehaviour<MainSequence>
     IEnumerator Init()
     {
         Canvas = PrefabManager.InstantiateOn(PrefabModel.Path.UICanvas).GetComponent<Canvas>();
+        DialogSingleton.SetPrefab(PrefabManager.GetPrefab(PrefabModel.Path.DialogCanvas).GetComponent<Dialog>());
         _stateMachine.Next(State.Choice);
         yield return null;
     }
@@ -62,13 +66,14 @@ public class MainSequence : SingletonMonoBehaviour<MainSequence>
         menu.ItemPrefab = PrefabManager.GetPrefab(PrefabModel.Path.Button);
         menu.OnUpdateElement.AddListener((go, index) =>
         {
-            if (_samples.ContainsKey((Samples) index))
+            var key = _samples.Keys.ToArray()[index];
+            if (_samples.ContainsKey(key))
             {
-                go.GetComponent<AsyncButtonUI>().StartLoadingAndSetText(_samples[(Samples)index].name);
+                go.GetComponent<AsyncButtonUI>().StartLoadingAndSetText(_samples[key].name);
                 go.GetComponent<AsyncButtonUI>().Button.onClick.RemoveAllListeners();
                 go.GetComponent<AsyncButtonUI>().Button.onClick.AddListener(() =>
                 {
-                    _selected = (Samples) index;
+                    _selected = key;
                     select = true;
                 });
             }

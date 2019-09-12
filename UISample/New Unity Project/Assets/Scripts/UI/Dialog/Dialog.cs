@@ -11,11 +11,22 @@ namespace Toast
         public class InputData
         {
             //public Vector2 Size = new Vector2(640,320);
-            public Vector2 Position = new Vector2(640, 320);
-            public DialogContents Contents;
-            public System.Action<DialogContents> ContentsInit;
+            public Vector2 Position = new Vector2(0, 0);
+            public DialogContents ContentsPrefab { get; protected set; }
+            public System.Action<DialogContents> ContentsInit { get; protected set; }
         }
+        public class InputData<T> : InputData where T : DialogContents
+        {
+            public System.Action<T> SetContentsInit
+            {
+                set => ContentsInit = dialog => { value?.Invoke((T)dialog);}; 
+            }
 
+            public T SetContentsPrefab
+            {
+                set => ContentsPrefab = value;
+            }
+        }
         public enum State
         {
             Init,
@@ -27,10 +38,10 @@ namespace Toast
 
         private Dictionary<State, string> AnimationTrigger = new Dictionary<State, string>()
         {
-            {State.Opening, "Opening"},
-            {State.Stable, "Stable"},
-            {State.Closing, "Closing"},
-            {State.End, "End"},
+            {State.Opening, "Open"},
+            //{State.Stable, "Stable"},
+            {State.Closing, "Close"},
+            //{State.End, "End"},
         };
         /// <summary>
         /// 終了まで待機するステート名
@@ -53,6 +64,7 @@ namespace Toast
 
         public void Init(InputData input)
         {
+
             _statemachine.Init(this);
             _inputCache = input;
             _statemachine.Next(State.Opening);
@@ -121,7 +133,7 @@ namespace Toast
         {
             if (AnimationTrigger.ContainsKey(s))
             {
-                _animator.SetTrigger(AnimationTrigger[s]);
+                _animator.Play(AnimationTrigger[s]);
             }
         }
 
@@ -135,21 +147,23 @@ namespace Toast
 
         private void SetSize(InputData input)
         {
-            //_dialogRoot.sizeDelta = input.Size;
+            
             _dialogRoot.anchoredPosition = input.Position;
         }
         private void InitContents(InputData input)
         {
-            if (input.Contents == null)
+            if (input.ContentsPrefab == null)
             {
                 return;
             }
-            var ins = Instantiate(input.Contents, _contentsBase);
+            var ins = Instantiate(input.ContentsPrefab, _contentsBase);
             input.ContentsInit?.Invoke(ins);
             //ins.GetComponent<RectTransform>().sizeDelta = input.Size;
             ins.Dialog = this;
             _dialogContentsInstance = ins;
-            //ins.GetComponent<RectTransform>().anchoredPosition = ;
+            
+            _dialogRoot.sizeDelta = ins.GetComponent<RectTransform>().sizeDelta;
+            ins.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
         }
 
         #endregion

@@ -56,6 +56,7 @@ public class MapModel
 /// <summary>
 /// すごろくのマス
 /// </summary>
+[Serializable]
 public class StationModel
 {
     //public int Id;
