@@ -25,7 +25,17 @@ public class MapDataConverter : MonoBehaviour
     public Tilemap Node => _node;
     public void SetStationModel(List<StationModel> models)
     {
-        _stationModels = models;
+        _stationModels.Clear();
+        _stationModels.AddRange(models.ToArray());
+    }
+
+    public MapModel GetMapModel()
+    {
+        return new MapModel()
+        {
+            Data = _stationModels.ToArray(),
+            
+        };
     }
 
 
@@ -36,7 +46,7 @@ public class MapDataConverter : MonoBehaviour
 #if UNITY_EDITOR
 namespace UnityEditor.UI
 {
-    [CustomEditor(typeof(MapDataConverter), true)]
+    [CustomEditor(typeof(MapDataConverter))]
     public class MapDataConverterEditor : Editor
     {
         //private SerializedProperty _road;
@@ -111,6 +121,9 @@ namespace UnityEditor.UI
                 count++;
             }
             cvt.SetStationModel(list);
+            Debug.Log("Set Dirty");
+            EditorUtility.SetDirty(target);
+            AssetDatabase.SaveAssets();
             EditorUtility.ClearProgressBar();
         }
 

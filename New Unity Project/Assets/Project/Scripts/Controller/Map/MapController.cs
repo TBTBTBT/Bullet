@@ -16,11 +16,12 @@ public class MapController
     {
         Debug.Log("[MapController]Init");
         _mapSercher = new MapSercher();
-        _mapModel = new MapModel();
-        _mapView = PrefabManager.Instance.InstantiateOn(PrefabModel.Path.MapGrid).GetComponent<MapView>();
-        _mapView.transform.position = Vector3.zero;
         SetDebugMap();
-        _mapView.Init(MapModel);
+        //_mapView = PrefabManager.Instance.InstantiateOn(PrefabModel.Path.MapGrid).GetComponent<MapView>();
+        _mapView.transform.position = Vector3.zero;
+        
+        //プレハブで設定済みの予定
+        //_mapView.Init(MapModel);
     }
 
     public MapSercher MapSercher => _mapSercher;
@@ -29,7 +30,16 @@ public class MapController
     #region Debug
     public void SetDebugMap()
     {
-        _mapModel = SampleMap();
+        var map = PrefabManager.Instance.InstantiateOn(PrefabModel.Path.Map00);
+        _mapModel = LoadFromPrefab(map.GetComponent<MapDataConverter>());
+        _mapView = map.GetComponent<MapView>();
+
+    }
+
+    private MapModel LoadFromPrefab(MapDataConverter converter)
+    {
+        return converter.GetMapModel();
+
     }
     private MapModel SampleMap()
     {

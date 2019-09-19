@@ -14,7 +14,55 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _road: {fileID: 2994964390066396002}
   _node: {fileID: 5801463304504000498}
-  _stationModels: []
+  _stationModels:
+  - Type: 0
+    Pos: {x: -1, y: 3}
+    Relation: 0500000001000000
+    Id: 0
+  - Type: 0
+    Pos: {x: -1, y: 4}
+    Relation: 0000000002000000
+    Id: 1
+  - Type: 0
+    Pos: {x: -1, y: 5}
+    Relation: 0600000001000000
+    Id: 2
+  - Type: 0
+    Pos: {x: 0, y: 0}
+    Relation: 0700000004000000
+    Id: 3
+  - Type: 0
+    Pos: {x: 0, y: 1}
+    Relation: 090000000300000005000000
+    Id: 4
+  - Type: 0
+    Pos: {x: 0, y: 3}
+    Relation: 000000000400000006000000
+    Id: 5
+  - Type: 0
+    Pos: {x: 0, y: 5}
+    Relation: 0200000005000000
+    Id: 6
+  - Type: 0
+    Pos: {x: 1, y: 0}
+    Relation: 0300000008000000
+    Id: 7
+  - Type: 0
+    Pos: {x: 2, y: 0}
+    Relation: 0700000009000000
+    Id: 8
+  - Type: 0
+    Pos: {x: 2, y: 1}
+    Relation: 040000000b000000080000000a000000
+    Id: 9
+  - Type: 0
+    Pos: {x: 2, y: 2}
+    Relation: 09000000
+    Id: 10
+  - Type: 0
+    Pos: {x: 4, y: 1}
+    Relation: 09000000
+    Id: 11
 --- !u!1001 &7559948968767644566
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -26,6 +74,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: map_grid_00
+      objectReference: {fileID: 0}
+    - target: {fileID: 4718107435045227518, guid: 2771548af5144ca448c029654ce3fab4,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4718107435045227516, guid: 2771548af5144ca448c029654ce3fab4,
         type: 3}
@@ -1029,6 +1082,11 @@ PrefabInstance:
       propertyPath: m_TileMatrixArray.Array.data[0].m_Data.e32
       value: 4.591e-41
       objectReference: {fileID: 0}
+    - target: {fileID: 1282823244115794648, guid: 2771548af5144ca448c029654ce3fab4,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 180867191615468802, guid: 2771548af5144ca448c029654ce3fab4,
         type: 3}
       propertyPath: m_IsActive
@@ -1040,11 +1098,6 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4718107434468767991, guid: 2771548af5144ca448c029654ce3fab4,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1282823244115794648, guid: 2771548af5144ca448c029654ce3fab4,
         type: 3}
       propertyPath: m_IsActive
       value: 1

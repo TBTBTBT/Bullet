@@ -39,7 +39,7 @@ public class MapModel
         WeedFloor,
         [ResourcePath(TilePathRoot + "Floor/Tile_Floor_1003")]
         RockFloor,
-        [ResourcePath(TilePathRoot + "Floor/Tile_Floor_1001")]
+        [ResourcePath(TilePathRoot + "Selectable/Select_01")]
         SelectTile,
     }
     public static Dictionary<ObjectType, (TilePath,TileLayer)> TypeToAsset = new Dictionary<ObjectType, (TilePath, TileLayer)>()

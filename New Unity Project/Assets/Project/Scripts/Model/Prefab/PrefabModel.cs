@@ -23,6 +23,8 @@ public class PrefabModel
         Label,
         [ResourcePath(RootPath + "map_grid")]
         MapGrid,
+        [ResourcePath(RootPath + "map_grid_00")]
+        Map00,
         [ResourcePath(RootPath + "map_ui")]
         MapUI,
         [ResourcePath(RootPath + "ui_player")]
