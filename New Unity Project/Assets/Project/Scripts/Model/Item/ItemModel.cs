@@ -5,7 +5,7 @@ using UnityEngine;
 public class ItemModel 
 {
     public ItemyType Type;
-
+    public bool isCarry;
 }
 public enum ItemyType
 {

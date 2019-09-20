@@ -24,6 +24,24 @@ public class DramaView : MonoBehaviour
     {
         
     }
+
+    public void Init()
+    {
+        foreach (var imageSet in _left)
+        {
+            imageSet.Image.gameObject.SetActive( false );
+            imageSet.Name.text = "";
+        }
+        foreach (var imageSet in _right)
+        {
+            imageSet.Image.gameObject.SetActive(false);
+            imageSet.Name.text = "";
+        }
+        foreach (var backGrownd in _backGrownds)
+        {
+            backGrownd.Image.gameObject.SetActive(false);
+        }
+    }
     public void SetBG(DramaSpriteModel sprite,int index)
     {
         if(_backGrownds.Length <= index)
@@ -31,6 +49,7 @@ public class DramaView : MonoBehaviour
             
             return;
         }
+        _backGrownds[index].Image.gameObject.SetActive(true);
         _backGrownds[index].Image.sprite = sprite.Sprite;
         _backGrownds[index].Name.text = sprite.Name;
         _backGrownds[index].Anim.Play(sprite.AnimState.ToString(),0);
@@ -42,6 +61,7 @@ public class DramaView : MonoBehaviour
 
             return;
         }
+        _left[index].Image.gameObject.SetActive(true);
         _left[index].Image.sprite = sprite.Sprite;
         _left[index].Name.text = sprite.Name;
         _left[index].Anim.Play(sprite.AnimState.ToString(), 0);
@@ -53,6 +73,7 @@ public class DramaView : MonoBehaviour
 
             return;
         }
+        _right[index].Image.gameObject.SetActive(true);
         _right[index].Image.sprite = sprite.Sprite;
         _right[index].Name.text = sprite.Name;
         _right[index].Anim.Play(sprite.AnimState.ToString(), 0);

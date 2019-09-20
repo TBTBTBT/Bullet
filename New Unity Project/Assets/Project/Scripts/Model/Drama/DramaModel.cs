@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ public enum DramaAnimationState
     Out,
     Tilt,
 }
+[Serializable]
 public class DramaModel
 {
     //今のところ使わない
@@ -26,18 +28,20 @@ public class DramaModel
     //public StatusModel MoveStatus;
 
 }
-
+[Serializable]
 public class DramaNextModel
 {
     public string Name;//選択肢名
     public DramaType Type;
 }
+[Serializable]
 public class DramaSpriteModel
 {
     public Sprite Sprite;
     public string Name;
     public DramaAnimationState AnimState;
 }
+[Serializable]
 public class DramaFrameModel
 {
     public DramaSpriteModel[] BackSprite;//若いほうが後ろ

@@ -23,7 +23,8 @@ public class PlayerModel : UIModelBase
     public DiceModel Dice;
     public BelongModel Belong;
     public StatusModel Status;
-
+    public BattleController CurrentBattle = null;//継続中のバトルデータ
+    public EventPrefs EventProgress;
     //public IntEvent OnSelected = new IntEvent();
     //public IntEvent OnInputEvent = new IntEvent();
     public PlayerModel Init(PlayerType type,string id)

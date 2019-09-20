@@ -15,6 +15,7 @@ public class AppBoot : MonoBehaviour
         CreateSingleton<WholeSequence>();
         CreateSingleton<PrefabManager>();
         CreateSingleton<CameraManager>();
+        CreateSingleton<DramaManager>();
         CreateScript<DebugManager>();
     }
     private void CreateSingleton<T>() where T : SingletonMonoBehaviour<T>

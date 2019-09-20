@@ -12,10 +12,3 @@ public class MstDramaRecord : IMasterRecord
 
 
 }
-[Serializable]
-public enum DramaType
-{
-    None,
-    GameStartDrama,
-    
-}

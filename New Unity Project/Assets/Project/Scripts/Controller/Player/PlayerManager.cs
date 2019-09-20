@@ -21,6 +21,19 @@ public class PlayerManager : SingletonMonoBehaviour<PlayerManager>
 
     }
 
+    public PlayerModel FindPlayerModel(string id)
+    {
+        try
+        {
+            return _players.First(p=>p.Id == id);
+        }
+        catch (Exception e)
+        {
+            Debug.Log("Player NotFound");
+            return null;
+        }
+       
+    }
     //一巡したらtrue
     public void NextPlayer()
     {

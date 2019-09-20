@@ -14,6 +14,17 @@ public class ResourcePath : Attribute
         Path = path;
     }
 }
+[Serializable]
+[AttributeUsage(AttributeTargets.Field, Inherited = false)]
+public class EventType : Attribute
+{
+    public Type Type;
+
+    public EventType(Type type)
+    {
+        Type = type;
+    }
+}
 public static class EnumExtensions
 {
     /// <summary>

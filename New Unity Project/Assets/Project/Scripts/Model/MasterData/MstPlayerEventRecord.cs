@@ -12,8 +12,9 @@ public class MstPlayerEventRecord : IMasterRecord
     public int Odds;
     public PlayerEventMapType MapType;
     public PlayerEventNoticeType NoticeType;
+    public PlayerEventType EventType;
     public DramaType DramaType;
-
+    
 
 }
 /*
@@ -34,10 +35,13 @@ public enum PlayerEventMapType
 }
 public enum PlayerEventType
 {
-    GetItem,//アイテム取得イベント
-    GetItemRandom,//宝箱
+    [EventType(typeof(Pev00_Battle))]
     Battle,
-
+    [EventType(typeof(Pev01_WeaponGet))]
+    WeaponGet,
+    Carry,
+    Theft,
+    Peddler,
 }
 public enum PlayerEventInputType
 {

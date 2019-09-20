@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class DramaDataScriptableObject : ScriptableObject
 {
-
-    public DramaFrameModelSerialized[] Frame;
-    public DramaNextModelSerialized[] Next;
+    public DramaModel Model;
+    //public DramaFrameModelSerialized[] Frame;
+    //public DramaNextModelSerialized[] Next;
     //public 
     //
 }

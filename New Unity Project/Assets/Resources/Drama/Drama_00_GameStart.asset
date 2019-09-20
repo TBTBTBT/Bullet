@@ -12,25 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: daad647731f3c424eb13ae69f2c6b18e, type: 3}
   m_Name: Drama_00_GameStart
   m_EditorClassIdentifier: 
-  Frame:
-  - BackSprite: []
-    LeftChara: []
-    RightChara: []
-    Text: "\u3088\u304F\u6765\u305F\u52C7\u8005\u306E\u8AF8\u541B"
-  - BackSprite: []
-    LeftChara: []
-    RightChara: []
-    Text: 
-  - BackSprite: []
-    LeftChara: []
-    RightChara: []
-    Text: 
-  - BackSprite: []
-    LeftChara: []
-    RightChara: []
-    Text: 
-  - BackSprite: []
-    LeftChara: []
-    RightChara: []
-    Text: 
-  Next: []
+  Model:
+    Frame:
+    - BackSprite: []
+      LeftChara: []
+      RightChara: []
+      Text: testtesttest
+    - BackSprite: []
+      LeftChara: []
+      RightChara: []
+      Text: test2
+    - BackSprite: []
+      LeftChara: []
+      RightChara: []
+      Text: test3\ntest
+    - BackSprite: []
+      LeftChara: []
+      RightChara: []
+      Text: end/
+    Next: []

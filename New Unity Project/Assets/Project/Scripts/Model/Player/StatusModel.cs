@@ -13,7 +13,10 @@ public class StatusModel : UIModelBase
     public int Mag;
 
     //
+    public int Gold;
     public int HpCurrent;
     public int MapPos;
+    public int MarriageId;
+
 
 }

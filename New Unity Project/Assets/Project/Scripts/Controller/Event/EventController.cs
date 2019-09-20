@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PlayerEventController
 {
-    private PlayerEventModel _data;
+    private MstPlayerEventRecord _data;
     public void DecideEvent()
     {
         //var dummy = new PlayerEventModel();
@@ -15,36 +15,15 @@ public class PlayerEventController
     }
     public IEnumerator Play()
     {
-        
-        if (HasDrama())
-        {
-            yield return Drama(_data.Drama);
-        }
-
+        Debug.Log("[ PlayerEvent ] Play");
+        var type = _data.EventType.GetAttribute<EventType>().Type;
+        var ev =  (PlayerEventBase)Activator.CreateInstance(type);
+        yield return ev.Play(_data);
         yield return null;
     }
-    private bool HasDrama()
-    {
-        try
-        {
-            if (_data.Drama != DramaType.None)
-            {
-                return true;
-            }
-        }
-        catch (Exception e)
-        {
-            Debug.LogError(e);
-            return false;
-        }
-        return false;
-    }
-    
 
-    private IEnumerator Drama(DramaType type)
-    {
-        yield return DramaManager.Instance.Play(type);
-    }
+
+
     //private IEnumerator Choice()
     //{
 
@@ -61,11 +40,12 @@ public class PlayerEventController
     //    yield return null;
     //}
     //抽選
-    public PlayerEventModel Lottery()
+    public MstPlayerEventRecord Lottery()
     {
-        var cache = new PlayerEventModel();
-        var records = MasterdataManager.Records<MstPlayerEventRecord>();
 
-        return cache;
+        var records = MasterdataManager.Records<MstPlayerEventRecord>();
+        var selected = MasterdataManager.Get<MstPlayerEventRecord>(0);
+        Debug.Log("[ PlayerEvent ] Event Id : " + selected.Id);
+        return selected;
     }
 }
